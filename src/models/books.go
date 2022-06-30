@@ -1,12 +1,13 @@
 package models
 
 import (
+	"time"
+
 	"github.com/mmcdole/gofeed"
-	"google.golang.org/genproto/googleapis/type/datetime"
 )
 
 type BookList struct {
-	UploadDate datetime.DateTime
+	UploadDate time.Time
 	Books      []*Book
 }
 
@@ -21,9 +22,9 @@ type Book struct {
 	Target          string
 	Format          string
 	Genre           string
-	PubDate         datetime.DateTime
-	CreatedDate     datetime.DateTime
-	LastUpdatedDate datetime.DateTime
+	PubDate         time.Time
+	CreatedDate     time.Time
+	LastUpdatedDate time.Time
 }
 
 func NewBookListFromFeed(feed *gofeed.Feed) *BookList {
@@ -34,13 +35,13 @@ func NewBookListFromFeed(feed *gofeed.Feed) *BookList {
 			Title:      item.Title,
 			Url:        item.Link,
 			Categories: item.Categories,
-			PubDate:    item.PublishedParsed,
+			PubDate:    *item.PublishedParsed,
 		}
 		books = append(books, &book)
 	}
 
 	return &BookList{
-		UploadDate: feed.PublishedParsed,
+		UploadDate: *feed.PublishedParsed,
 		Books:      books,
 	}
 }
