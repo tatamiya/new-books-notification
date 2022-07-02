@@ -1,8 +1,7 @@
 package models
 
 import (
-	"github.com/tatamiya/gcp-cost-notification/src/datetime"
-	"google.golang.org/genproto/googleapis/type/datetime"
+	"time"
 )
 
 type OpenBDResponse struct {
@@ -20,9 +19,9 @@ type DescriptiveDetail struct {
 }
 
 type Hanmoto struct {
-	DateModified datetime.DateTime `json:"datemodified"`
-	DateCreated  datetime.DateTime `json:"datecreated"`
-	DateKoukai   datetime.DateTime `json:"datekoukai"`
+	DateModified *time.Time `json:"datemodified"`
+	DateCreated  *time.Time `json:"datecreated"`
+	DateKoukai   *time.Time `json:"datekoukai"`
 }
 
 type Summary struct {
