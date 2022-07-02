@@ -1,6 +1,8 @@
 package models
 
 import (
+	"net/url"
+	"regexp"
 	"time"
 
 	"github.com/mmcdole/gofeed"
@@ -32,6 +34,7 @@ func NewBookListFromFeed(feed *gofeed.Feed) *BookList {
 	var books []*Book
 	for _, item := range feed.Items {
 		book := Book{
+			Isbn:       extractISBN(item.Link),
 			Title:      item.Title,
 			Url:        item.Link,
 			Categories: item.Categories,
@@ -44,4 +47,10 @@ func NewBookListFromFeed(feed *gofeed.Feed) *BookList {
 		UploadDate: *feed.PublishedParsed,
 		Books:      books,
 	}
+}
+
+func extractISBN(link string) string {
+	u, _ := url.Parse(link)
+	re := regexp.MustCompile(`[0-9]{13}`)
+	return re.FindString(u.Path)
 }

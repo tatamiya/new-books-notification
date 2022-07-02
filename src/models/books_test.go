@@ -39,12 +39,14 @@ func TestGenerateNewBookListFromFeedCorrectly(t *testing.T) {
 		UploadDate: datePublished,
 		Books: []*Book{
 			{
+				Isbn:       "1111111111111",
 				Title:      "ご冗談でしょう、tatamiyaさん - tatamiya tamiya(著 / 文) | 畳屋書店",
 				Url:        "http://example.com/bd/isbn/1111111111111",
 				PubDate:    date1,
 				Categories: []string{"自然科学"},
 			},
 			{
+				Isbn:       "9999999999999",
 				Title:      "流体力学（後編） - 今井功(著 / 文) | 裳華房",
 				Url:        "http://example.com/bd/isbn/9999999999999",
 				PubDate:    date2,
@@ -57,4 +59,12 @@ func TestGenerateNewBookListFromFeedCorrectly(t *testing.T) {
 
 	assert.EqualValues(t, expectedBookList, *actualBookList)
 
+}
+
+func TestExtractISBN(t *testing.T) {
+	inputURL := "http://example.com/bd/isbn/9999999999999"
+	expectedISBN := "9999999999999"
+
+	actualISBN := extractISBN(inputURL)
+	assert.Equal(t, expectedISBN, actualISBN)
 }
