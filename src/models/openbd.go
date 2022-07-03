@@ -1,9 +1,5 @@
 package models
 
-import (
-	"time"
-)
-
 type OpenBDResponse struct {
 	Onix    Onix    `json:"onix"`
 	Hanmoto Hanmoto `json:"hanmoto"`
@@ -15,13 +11,19 @@ type Onix struct {
 }
 
 type DescriptiveDetail struct {
-	Contributor string `json:"contributor"`
+	Subject []Subject `json:"Subject"`
+}
+
+type Subject struct {
+	MainSubject             string `json:"MainSubject"`
+	SubjectSchemeIdentifier string `json:"SubjectSchemeIdentifier"`
+	SubjectCode             string `json:"SubjectCode"`
 }
 
 type Hanmoto struct {
-	DateModified *time.Time `json:"datemodified"`
-	DateCreated  *time.Time `json:"datecreated"`
-	DateKoukai   *time.Time `json:"datekoukai"`
+	DateModified string `json:"datemodified"`
+	DateCreated  string `json:"datecreated"`
+	DateKoukai   string `json:"datekoukai"`
 }
 
 type Summary struct {
