@@ -1,4 +1,4 @@
-package models
+package openbd
 
 type OpenBDResponse struct {
 	Onix    Onix    `json:"onix"`
