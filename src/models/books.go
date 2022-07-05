@@ -1,11 +1,13 @@
 package models
 
 import (
+	"log"
 	"net/url"
 	"regexp"
 	"time"
 
 	"github.com/mmcdole/gofeed"
+	"github.com/tatamiya/new-books-notification/src/openbd"
 )
 
 type BookList struct {
@@ -53,4 +55,29 @@ func extractISBN(link string) string {
 	u, _ := url.Parse(link)
 	re := regexp.MustCompile(`[0-9]{13}`)
 	return re.FindString(u.Path)
+}
+
+func (b *Book) UpdateInfoFrom(openbd *openbd.OpenBDResponse) {
+	summary := openbd.Summary
+	b.Authors = summary.Author
+	b.Publisher = summary.Publisher
+
+	ccode := openbd.Onix.DescriptiveDetail.Subject[0].SubjectCode
+	b.Ccode = ccode
+
+	hanmoto := openbd.Hanmoto
+	loc, _ := time.LoadLocation("Asia/Tokyo")
+
+	dateCreated, err := time.ParseInLocation("2006-01-02 15:04:05", hanmoto.DateCreated, loc)
+	if err != nil {
+		log.Printf("Error in parsing timestamp: %s", hanmoto.DateCreated)
+	}
+	b.CreatedDate = dateCreated
+
+	dateModified, err := time.ParseInLocation("2006-01-02 15:04:05", hanmoto.DateModified, loc)
+	if err != nil {
+		log.Printf("Error in parsing timestamp: %s", hanmoto.DateModified)
+	}
+	b.LastUpdatedDate = dateModified
+
 }
