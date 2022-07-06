@@ -1,4 +1,4 @@
-package models
+package decoder
 
 type CCodeTable struct {
 	Taishou map[string]string `json:"taishou"`
