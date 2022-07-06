@@ -62,8 +62,10 @@ func (b *Book) UpdateInfoFrom(openbd *openbd.OpenBDResponse) {
 	b.Authors = summary.Author
 	b.Publisher = summary.Publisher
 
-	ccode := openbd.Onix.DescriptiveDetail.Subject[0].SubjectCode
-	b.Ccode = ccode
+	subjects := openbd.Onix.DescriptiveDetail.Subject
+	if len(subjects) > 0 {
+		b.Ccode = subjects[0].SubjectCode
+	}
 
 	hanmoto := openbd.Hanmoto
 	loc, _ := time.LoadLocation("Asia/Tokyo")

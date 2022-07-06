@@ -124,3 +124,52 @@ func TestUpdateBookInfo(t *testing.T) {
 	assert.Equal(t, "", sampleBook.Format)
 	assert.Equal(t, "", sampleBook.Genre)
 }
+
+func TestUpdateWithEmptyCcodeWhenSubjectIsEmpty(t *testing.T) {
+	loc, _ := time.LoadLocation("Asia/Tokyo")
+	date1 := time.Date(2024, time.August, 31, 12, 13, 24, 0, loc)
+	sampleBook := Book{
+		Isbn:       "1111111111111",
+		Title:      "ご冗談でしょう、tatamiyaさん - tatamiya tamiya(著 / 文) | 畳屋書店",
+		Url:        "http://example.com/bd/isbn/1111111111111",
+		PubDate:    date1,
+		Categories: []string{"自然科学"},
+	}
+
+	inputOpenBDResp := openbd.OpenBDResponse{
+		Onix: openbd.Onix{
+			DescriptiveDetail: openbd.DescriptiveDetail{
+				Subject: []openbd.Subject{},
+			},
+		},
+		Hanmoto: openbd.Hanmoto{
+			DateModified: "2022-08-01 18:18:39",
+			DateCreated:  "2022-06-30 18:22:39",
+			DateKoukai:   "20220701",
+		},
+		Summary: openbd.Summary{
+			ISBN:      "1111111111111",
+			Title:     "ご冗談でしょう、tatamiyaさん",
+			Series:    "シリーズ畳の不思議",
+			Volume:    "1",
+			Publisher: "畳屋書店",
+			PubDate:   "20240831",
+			Author:    "tatamiya tamiya／著 畳の科学／編集",
+		},
+	}
+
+	sampleBook.UpdateInfoFrom(&inputOpenBDResp)
+	assert.Equal(t, "畳屋書店", sampleBook.Publisher)
+	assert.Equal(t, "tatamiya tamiya／著 畳の科学／編集", sampleBook.Authors)
+	assert.Equal(t, "", sampleBook.Ccode)
+
+	expectedLastUpdatedDate := time.Date(2022, time.August, 1, 18, 18, 39, 0, loc)
+	assert.Equal(t, expectedLastUpdatedDate, sampleBook.LastUpdatedDate)
+
+	expectedCreatedDate := time.Date(2022, time.June, 30, 18, 22, 39, 0, loc)
+	assert.Equal(t, expectedCreatedDate, sampleBook.CreatedDate)
+
+	assert.Equal(t, "", sampleBook.Target)
+	assert.Equal(t, "", sampleBook.Format)
+	assert.Equal(t, "", sampleBook.Genre)
+}
