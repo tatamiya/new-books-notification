@@ -7,6 +7,7 @@ import (
 	"github.com/mmcdole/gofeed"
 	"github.com/stretchr/testify/assert"
 	"github.com/tatamiya/new-books-notification/src/openbd"
+	"github.com/tatamiya/new-books-notification/src/subject"
 )
 
 func TestGenerateNewBookListFromFeedCorrectly(t *testing.T) {
@@ -172,4 +173,31 @@ func TestUpdateWithEmptyCcodeWhenSubjectIsEmpty(t *testing.T) {
 	assert.Equal(t, "", sampleBook.Target)
 	assert.Equal(t, "", sampleBook.Format)
 	assert.Equal(t, "", sampleBook.Genre)
+}
+
+func TestUpdateGenre(t *testing.T) {
+	loc, _ := time.LoadLocation("Asia/Tokyo")
+	date1 := time.Date(2024, time.August, 31, 12, 13, 24, 0, loc)
+	sampleBook := Book{
+		Isbn:       "1111111111111",
+		Title:      "ご冗談でしょう、tatamiyaさん - tatamiya tamiya(著 / 文) | 畳屋書店",
+		Url:        "http://example.com/bd/isbn/1111111111111",
+		PubDate:    date1,
+		Categories: []string{"自然科学"},
+		Ccode:      "1041",
+	}
+
+	decodedSubject := subject.DecodedSubject{
+		Ccode:  "1042",
+		Target: "教養",
+		Format: "単行本",
+		Genre:  "物理学",
+	}
+
+	sampleBook.UpdateSubject(&decodedSubject)
+
+	assert.EqualValues(t, "教養", sampleBook.Target)
+	assert.EqualValues(t, "単行本", sampleBook.Format)
+	assert.EqualValues(t, "物理学", sampleBook.Genre)
+
 }

@@ -8,6 +8,7 @@ import (
 
 	"github.com/mmcdole/gofeed"
 	"github.com/tatamiya/new-books-notification/src/openbd"
+	"github.com/tatamiya/new-books-notification/src/subject"
 )
 
 type BookList struct {
@@ -81,5 +82,13 @@ func (b *Book) UpdateInfoFrom(openbd *openbd.OpenBDResponse) {
 		log.Printf("Error in parsing timestamp: %s", hanmoto.DateModified)
 	}
 	b.LastUpdatedDate = dateModified
+
+}
+
+func (b *Book) UpdateSubject(subject *subject.DecodedSubject) {
+
+	b.Target = subject.Target
+	b.Format = subject.Format
+	b.Genre = subject.Genre
 
 }
