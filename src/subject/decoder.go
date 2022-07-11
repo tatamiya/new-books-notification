@@ -1,7 +1,9 @@
 package subject
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"strconv"
 )
 
@@ -34,4 +36,19 @@ func (s *SubjectDecoder) decode(ccode string) (*DecodedSubject, error) {
 	return &DecodedSubject{
 		ccode, target, format, genre,
 	}, nil
+}
+
+func NewSubjectDecoder() (*SubjectDecoder, error) {
+
+	var decoder SubjectDecoder
+	ccodeData, ioErr := ioutil.ReadFile("./ccode.json")
+	if ioErr != nil {
+		return nil, fmt.Errorf("Could not read ccode.json!: %s", ioErr)
+	}
+	jsonErr := json.Unmarshal(ccodeData, &decoder)
+	if jsonErr != nil {
+		return nil, fmt.Errorf("Could not unmarshal json data!: %s", jsonErr)
+	}
+
+	return &decoder, nil
 }

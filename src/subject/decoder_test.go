@@ -63,3 +63,11 @@ func TestDecodedResultIsEmptyWhenNotFound(t *testing.T) {
 	assert.Nil(t, err)
 	assert.EqualValues(t, expectedDecoded, *actualDecoded)
 }
+
+func TestNewSubjectDecoder(t *testing.T) {
+	decoder, err := NewSubjectDecoder()
+	assert.Nil(t, err)
+	assert.EqualValues(t, "一般", decoder.Taishou["0"])
+	assert.EqualValues(t, "単行本", decoder.Keitai["0"])
+	assert.EqualValues(t, "総記", decoder.Naiyou["00"])
+}
