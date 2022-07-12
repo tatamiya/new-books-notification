@@ -20,7 +20,7 @@ type DecodedSubject struct {
 	Genre  string
 }
 
-func (s *SubjectDecoder) decode(ccode string) (*DecodedSubject, error) {
+func (s *SubjectDecoder) Decode(ccode string) (*DecodedSubject, error) {
 
 	if _, err := strconv.Atoi(ccode); err != nil {
 		return nil, fmt.Errorf("Invalid Ccode! %s cannot be converted to digits: %s", ccode, err)

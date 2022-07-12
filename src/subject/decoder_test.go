@@ -31,21 +31,21 @@ func TestDecodeSubjectCorrectly(t *testing.T) {
 		Genre:  "自然科学総記",
 	}
 
-	actualDecoded, err := testDecoder.decode("0040")
+	actualDecoded, err := testDecoder.Decode("0040")
 	assert.Nil(t, err)
 	assert.EqualValues(t, expectedDecoded, *actualDecoded)
 }
 
 func TestDecodingFailsWhenCcodeIsNotFourDigits(t *testing.T) {
 
-	actualDecoded, err := testDecoder.decode("040")
+	actualDecoded, err := testDecoder.Decode("040")
 	assert.NotNil(t, err)
 	assert.Nil(t, actualDecoded)
 }
 
 func TestDecodingFailsWhenCcodeContainsNonDigit(t *testing.T) {
 
-	actualDecoded, err := testDecoder.decode("1a40")
+	actualDecoded, err := testDecoder.Decode("1a40")
 	assert.NotNil(t, err)
 	assert.Nil(t, actualDecoded)
 }
@@ -59,7 +59,7 @@ func TestDecodedResultIsEmptyWhenNotFound(t *testing.T) {
 		Genre:  "",
 	}
 
-	actualDecoded, err := testDecoder.decode("0049")
+	actualDecoded, err := testDecoder.Decode("0049")
 	assert.Nil(t, err)
 	assert.EqualValues(t, expectedDecoded, *actualDecoded)
 }
