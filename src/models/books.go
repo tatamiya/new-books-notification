@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"log"
 	"net/url"
 	"regexp"
@@ -85,14 +86,16 @@ func (b *Book) UpdateInfoFrom(openbd *openbd.OpenBDResponse) {
 
 }
 
-func (b *Book) UpdateSubject(decoder *subject.SubjectDecoder) {
+func (b *Book) UpdateSubject(decoder *subject.SubjectDecoder) error {
 
 	decodedSubject, err := decoder.Decode(b.Ccode)
 	if err != nil {
-		return
+		return fmt.Errorf("Error in decoding Ccode: %s", err)
 	}
 	b.Target = decodedSubject.Target
 	b.Format = decodedSubject.Format
 	b.Genre = decodedSubject.Genre
+
+	return nil
 
 }

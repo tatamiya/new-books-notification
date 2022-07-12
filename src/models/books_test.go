@@ -202,7 +202,9 @@ func TestUpdateSubject(t *testing.T) {
 		},
 	}
 
-	sampleBook.UpdateSubject(&sampleDecoder)
+	err := sampleBook.UpdateSubject(&sampleDecoder)
+
+	assert.Nil(t, err)
 
 	assert.EqualValues(t, "教養", sampleBook.Target)
 	assert.EqualValues(t, "単行本", sampleBook.Format)
