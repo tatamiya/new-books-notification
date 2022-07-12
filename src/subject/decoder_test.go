@@ -65,7 +65,7 @@ func TestDecodedResultIsEmptyWhenNotFound(t *testing.T) {
 }
 
 func TestNewSubjectDecoder(t *testing.T) {
-	decoder, err := NewSubjectDecoder()
+	decoder, err := NewSubjectDecoder("./ccode.json")
 	assert.Nil(t, err)
 	assert.EqualValues(t, "一般", decoder.Taishou["0"])
 	assert.EqualValues(t, "単行本", decoder.Keitai["0"])

@@ -38,10 +38,10 @@ func (s *SubjectDecoder) Decode(ccode string) (*DecodedSubject, error) {
 	}, nil
 }
 
-func NewSubjectDecoder() (*SubjectDecoder, error) {
+func NewSubjectDecoder(codeTablePath string) (*SubjectDecoder, error) {
 
 	var decoder SubjectDecoder
-	ccodeData, ioErr := ioutil.ReadFile("./ccode.json")
+	ccodeData, ioErr := ioutil.ReadFile(codeTablePath)
 	if ioErr != nil {
 		return nil, fmt.Errorf("Could not read ccode.json!: %s", ioErr)
 	}
