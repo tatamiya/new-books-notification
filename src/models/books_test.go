@@ -211,3 +211,40 @@ func TestUpdateSubject(t *testing.T) {
 	assert.EqualValues(t, "物理学", sampleBook.Genre)
 
 }
+
+func TestNotUpdateSubjectWhenCcodeIsInvalid(t *testing.T) {
+	loc, _ := time.LoadLocation("Asia/Tokyo")
+	date1 := time.Date(2024, time.August, 31, 12, 13, 24, 0, loc)
+	sampleBook := Book{
+		Isbn:       "1111111111111",
+		Title:      "ご冗談でしょう、tatamiyaさん - tatamiya tamiya(著 / 文) | 畳屋書店",
+		Url:        "http://example.com/bd/isbn/1111111111111",
+		PubDate:    date1,
+		Categories: []string{"自然科学"},
+		Ccode:      "",
+	}
+	sampleDecoder := subject.SubjectDecoder{
+		Taishou: map[string]string{
+			"0": "一般",
+			"1": "教養",
+			"3": "専門書",
+		},
+		Keitai: map[string]string{
+			"0": "単行本",
+			"1": "文庫",
+		},
+		Naiyou: map[string]string{
+			"40": "自然科学総記",
+			"42": "物理学",
+		},
+	}
+
+	err := sampleBook.UpdateSubject(&sampleDecoder)
+
+	assert.NotNil(t, err)
+
+	assert.EqualValues(t, "", sampleBook.Target)
+	assert.EqualValues(t, "", sampleBook.Format)
+	assert.EqualValues(t, "", sampleBook.Genre)
+
+}
