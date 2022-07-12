@@ -85,10 +85,14 @@ func (b *Book) UpdateInfoFrom(openbd *openbd.OpenBDResponse) {
 
 }
 
-func (b *Book) UpdateSubject(subject *subject.DecodedSubject) {
+func (b *Book) UpdateSubject(decoder *subject.SubjectDecoder) {
 
-	b.Target = subject.Target
-	b.Format = subject.Format
-	b.Genre = subject.Genre
+	decodedSubject, err := decoder.Decode(b.Ccode)
+	if err != nil {
+		return
+	}
+	b.Target = decodedSubject.Target
+	b.Format = decodedSubject.Format
+	b.Genre = decodedSubject.Genre
 
 }

@@ -184,17 +184,25 @@ func TestUpdateSubject(t *testing.T) {
 		Url:        "http://example.com/bd/isbn/1111111111111",
 		PubDate:    date1,
 		Categories: []string{"自然科学"},
-		Ccode:      "1041",
+		Ccode:      "1042",
+	}
+	sampleDecoder := subject.SubjectDecoder{
+		Taishou: map[string]string{
+			"0": "一般",
+			"1": "教養",
+			"3": "専門書",
+		},
+		Keitai: map[string]string{
+			"0": "単行本",
+			"1": "文庫",
+		},
+		Naiyou: map[string]string{
+			"40": "自然科学総記",
+			"42": "物理学",
+		},
 	}
 
-	decodedSubject := subject.DecodedSubject{
-		Ccode:  "1042",
-		Target: "教養",
-		Format: "単行本",
-		Genre:  "物理学",
-	}
-
-	sampleBook.UpdateSubject(&decodedSubject)
+	sampleBook.UpdateSubject(&sampleDecoder)
 
 	assert.EqualValues(t, "教養", sampleBook.Target)
 	assert.EqualValues(t, "単行本", sampleBook.Format)
