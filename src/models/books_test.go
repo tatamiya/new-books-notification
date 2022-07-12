@@ -175,7 +175,7 @@ func TestUpdateWithEmptyCcodeWhenSubjectIsEmpty(t *testing.T) {
 	assert.Equal(t, "", sampleBook.Genre)
 }
 
-func TestUpdateGenre(t *testing.T) {
+func TestUpdateSubject(t *testing.T) {
 	loc, _ := time.LoadLocation("Asia/Tokyo")
 	date1 := time.Date(2024, time.August, 31, 12, 13, 24, 0, loc)
 	sampleBook := Book{
