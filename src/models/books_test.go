@@ -71,6 +71,34 @@ func TestExtractISBN(t *testing.T) {
 	assert.Equal(t, expectedISBN, actualISBN)
 }
 
+var inputOpenBDResp = openbd.OpenBDResponse{
+	Onix: openbd.Onix{
+		DescriptiveDetail: openbd.DescriptiveDetail{
+			Subject: []openbd.Subject{
+				{
+					MainSubject:             "",
+					SubjectSchemeIdentifier: "00",
+					SubjectCode:             "1040",
+				},
+			},
+		},
+	},
+	Hanmoto: openbd.Hanmoto{
+		DateModified: "2022-08-01 18:18:39",
+		DateCreated:  "2022-06-30 18:22:39",
+		DateKoukai:   "20220701",
+	},
+	Summary: openbd.Summary{
+		ISBN:      "1111111111111",
+		Title:     "ご冗談でしょう、tatamiyaさん",
+		Series:    "シリーズ畳の不思議",
+		Volume:    "1",
+		Publisher: "畳屋書店",
+		PubDate:   "20240831",
+		Author:    "tatamiya tamiya／著 畳の科学／編集",
+	},
+}
+
 func TestUpdateBookInfo(t *testing.T) {
 	loc, _ := time.LoadLocation("Asia/Tokyo")
 	date1 := time.Date(2024, time.August, 31, 12, 13, 24, 0, loc)
@@ -80,34 +108,6 @@ func TestUpdateBookInfo(t *testing.T) {
 		Url:        "http://example.com/bd/isbn/1111111111111",
 		PubDate:    date1,
 		Categories: []string{"自然科学"},
-	}
-
-	inputOpenBDResp := openbd.OpenBDResponse{
-		Onix: openbd.Onix{
-			DescriptiveDetail: openbd.DescriptiveDetail{
-				Subject: []openbd.Subject{
-					{
-						MainSubject:             "",
-						SubjectSchemeIdentifier: "00",
-						SubjectCode:             "1040",
-					},
-				},
-			},
-		},
-		Hanmoto: openbd.Hanmoto{
-			DateModified: "2022-08-01 18:18:39",
-			DateCreated:  "2022-06-30 18:22:39",
-			DateKoukai:   "20220701",
-		},
-		Summary: openbd.Summary{
-			ISBN:      "1111111111111",
-			Title:     "ご冗談でしょう、tatamiyaさん",
-			Series:    "シリーズ畳の不思議",
-			Volume:    "1",
-			Publisher: "畳屋書店",
-			PubDate:   "20240831",
-			Author:    "tatamiya tamiya／著 畳の科学／編集",
-		},
 	}
 
 	sampleBook.UpdateInfoFrom(&inputOpenBDResp)
@@ -137,27 +137,10 @@ func TestUpdateWithEmptyCcodeWhenSubjectIsEmpty(t *testing.T) {
 		Categories: []string{"自然科学"},
 	}
 
-	inputOpenBDResp := openbd.OpenBDResponse{
-		Onix: openbd.Onix{
-			DescriptiveDetail: openbd.DescriptiveDetail{
-				Subject: []openbd.Subject{},
-			},
-		},
-		Hanmoto: openbd.Hanmoto{
-			DateModified: "2022-08-01 18:18:39",
-			DateCreated:  "2022-06-30 18:22:39",
-			DateKoukai:   "20220701",
-		},
-		Summary: openbd.Summary{
-			ISBN:      "1111111111111",
-			Title:     "ご冗談でしょう、tatamiyaさん",
-			Series:    "シリーズ畳の不思議",
-			Volume:    "1",
-			Publisher: "畳屋書店",
-			PubDate:   "20240831",
-			Author:    "tatamiya tamiya／著 畳の科学／編集",
-		},
-	}
+	inputOpenBDResp.Onix = openbd.Onix{
+		DescriptiveDetail: openbd.DescriptiveDetail{
+			Subject: []openbd.Subject{},
+		}}
 
 	sampleBook.UpdateInfoFrom(&inputOpenBDResp)
 	assert.Equal(t, "畳屋書店", sampleBook.Publisher)
