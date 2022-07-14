@@ -103,7 +103,7 @@ func (b *Book) UpdateSubject(decoder *subject.SubjectDecoder) error {
 
 func (b *Book) AsNotificationMessage() string {
 	url := b.Url
-	title := b.Title
+	title := strings.TrimSpace(b.Title)
 	pubDate := b.PubDate.Format("2006/01/02")
 	categories := strings.Join(b.Categories, ",")
 	genre := b.Genre

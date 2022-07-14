@@ -222,7 +222,7 @@ func TestCreateNotificationMessageCorrectly(t *testing.T) {
 	date1 := time.Date(2024, time.August, 31, 12, 13, 24, 0, loc)
 	sampleBook := Book{
 		Isbn:       "1111111111111",
-		Title:      "ご冗談でしょう、tatamiyaさん - tatamiya tamiya(著 / 文) | 畳屋書店",
+		Title:      "\nご冗談でしょう、tatamiyaさん - tatamiya tamiya(著 / 文) | 畳屋書店",
 		Url:        "http://example.com/bd/isbn/1111111111111",
 		PubDate:    date1,
 		Categories: []string{"自然科学"},
