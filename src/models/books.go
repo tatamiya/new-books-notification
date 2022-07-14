@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/url"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/mmcdole/gofeed"
@@ -98,4 +99,15 @@ func (b *Book) UpdateSubject(decoder *subject.SubjectDecoder) error {
 
 	return nil
 
+}
+
+func (b *Book) AsNotificationMessage() string {
+	url := b.Url
+	title := b.Title
+	pubDate := b.PubDate.Format("2006/01/02")
+	categories := strings.Join(b.Categories, ",")
+	genre := b.Genre
+
+	message := fmt.Sprintf("<%s|%s>\n発売日: %s\nカテゴリー: %s\n内容: %s", url, title, pubDate, categories, genre)
+	return message
 }
