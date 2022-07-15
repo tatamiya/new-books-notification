@@ -20,6 +20,13 @@ func (f *FavoriteFilter) IsFavorite(book *models.Book) bool {
 
 	}
 
+	genre := book.Genre
+	for _, favGenre := range f.FavoriteGenres {
+		if genre == favGenre {
+			return true
+		}
+	}
+
 	return false
 
 }
