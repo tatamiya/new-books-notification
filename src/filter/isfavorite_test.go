@@ -16,10 +16,10 @@ func TestReturnTrueForFavoriteCategory(t *testing.T) {
 
 	sampleBook := models.Book{
 		Categories: []string{"自然科学"},
-		Ccode:      "",
-		Target:     "",
-		Format:     "",
-		Genre:      "",
+		Ccode:      "1040",
+		Target:     "教養",
+		Format:     "単行本",
+		Genre:      "自然科学総記",
 	}
 
 	isfav := sampleFavoriteFilter.IsFavorite(&sampleBook)
@@ -32,10 +32,10 @@ func TestReturnFalseForNotFavoriteCategory(t *testing.T) {
 
 	sampleBook := models.Book{
 		Categories: []string{"趣味・実用"},
-		Ccode:      "",
-		Target:     "",
-		Format:     "",
-		Genre:      "",
+		Ccode:      "1040",
+		Target:     "教養",
+		Format:     "単行本",
+		Genre:      "自然科学総記",
 	}
 
 	isfav := sampleFavoriteFilter.IsFavorite(&sampleBook)
@@ -48,10 +48,10 @@ func TestReturnFalseForEmptyCategory(t *testing.T) {
 
 	sampleBook := models.Book{
 		Categories: []string{},
-		Ccode:      "",
-		Target:     "",
-		Format:     "",
-		Genre:      "",
+		Ccode:      "1040",
+		Target:     "教養",
+		Format:     "単行本",
+		Genre:      "自然科学総記",
 	}
 
 	isfav := sampleFavoriteFilter.IsFavorite(&sampleBook)
@@ -79,7 +79,7 @@ func TestReturnTrueForFavoriteGenre(t *testing.T) {
 func TestReturnFalseForNotFavoriteGenre(t *testing.T) {
 
 	sampleBook := models.Book{
-		Categories: []string{},
+		Categories: []string{"工業・工学"},
 		Ccode:      "1058",
 		Target:     "教養",
 		Format:     "単行本",
@@ -95,7 +95,7 @@ func TestReturnFalseForNotFavoriteGenre(t *testing.T) {
 func TestReturnFalseForEmptyGenre(t *testing.T) {
 
 	sampleBook := models.Book{
-		Categories: []string{},
+		Categories: []string{"工業・工学"},
 		Ccode:      "",
 		Target:     "",
 		Format:     "",
