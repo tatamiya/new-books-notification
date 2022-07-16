@@ -28,6 +28,22 @@ func TestReturnTrueForFavoriteCategory(t *testing.T) {
 
 }
 
+func TestReturnTrueForIfFavoriteCategoryHasSpace(t *testing.T) {
+
+	sampleBook := models.Book{
+		Categories: []string{"自然科学 "},
+		Ccode:      "1040",
+		Target:     "教養",
+		Format:     "単行本",
+		Genre:      "自然科学総記",
+	}
+
+	isfav := sampleFavoriteFilter.IsFavorite(&sampleBook)
+
+	assert.Equal(t, true, isfav)
+
+}
+
 func TestReturnFalseForNotFavoriteCategory(t *testing.T) {
 
 	sampleBook := models.Book{
