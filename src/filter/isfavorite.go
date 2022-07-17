@@ -1,14 +1,32 @@
 package filter
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"strings"
 
 	"github.com/tatamiya/new-books-notification/src/models"
 )
 
 type FavoriteFilter struct {
-	FavoriteCategories []string
-	FavoriteGenres     []string
+	FavoriteCategories []string `json:"categories"`
+	FavoriteGenres     []string `json:"genres"`
+}
+
+func NewFavoriteFilter(filterPath string) (*FavoriteFilter, error) {
+
+	var favFilter FavoriteFilter
+	filterData, ioErr := ioutil.ReadFile(filterPath)
+	if ioErr != nil {
+		return nil, fmt.Errorf("Could not read favorites.json!: %s", ioErr)
+	}
+	jsonErr := json.Unmarshal(filterData, &favFilter)
+	if jsonErr != nil {
+		return nil, fmt.Errorf("Could not unmarshal json data!: %s", jsonErr)
+	}
+
+	return &favFilter, nil
 }
 
 func (f *FavoriteFilter) IsFavorite(book *models.Book) bool {

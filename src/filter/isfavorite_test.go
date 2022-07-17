@@ -123,3 +123,11 @@ func TestReturnFalseForEmptyGenre(t *testing.T) {
 	assert.Equal(t, false, isfav)
 
 }
+
+func TestNewFavoriteFilter(t *testing.T) {
+
+	favFilter, err := NewFavoriteFilter("./sample_favorites.json")
+	assert.Nil(t, err)
+	assert.EqualValues(t, []string{"コンピュータ"}, favFilter.FavoriteCategories)
+	assert.EqualValues(t, []string{"情報科学", "電子通信"}, favFilter.FavoriteGenres)
+}
