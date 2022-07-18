@@ -15,3 +15,6 @@
 # vendor/
 
 *.sum
+
+# Environment variables
+.env
