@@ -11,7 +11,7 @@ import (
 
 type FavoriteFilter struct {
 	FavoriteCategories []string `json:"categories"`
-	FavoriteGenres     []string `json:"genres"`
+	FavoriteContents   []string `json:"contents"`
 }
 
 func NewFavoriteFilter(filterPath string) (*FavoriteFilter, error) {
@@ -42,9 +42,9 @@ func (f *FavoriteFilter) IsFavorite(book *models.Book) bool {
 
 	}
 
-	genre := book.Genre
-	for _, favGenre := range f.FavoriteGenres {
-		if genre == favGenre {
+	content := book.Content
+	for _, favContent := range f.FavoriteContents {
+		if content == favContent {
 			return true
 		}
 	}

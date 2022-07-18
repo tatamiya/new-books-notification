@@ -28,7 +28,7 @@ type Book struct {
 	Ccode           string
 	Target          string
 	Format          string
-	Genre           string
+	Content         string
 	PubDate         time.Time
 	CreatedDate     time.Time
 	LastUpdatedDate time.Time
@@ -95,7 +95,7 @@ func (b *Book) UpdateSubject(decoder *subject.SubjectDecoder) error {
 	}
 	b.Target = decodedSubject.Target
 	b.Format = decodedSubject.Format
-	b.Genre = decodedSubject.Genre
+	b.Content = decodedSubject.Content
 
 	return nil
 
@@ -106,8 +106,8 @@ func (b *Book) AsNotificationMessage() string {
 	title := strings.TrimSpace(b.Title)
 	pubDate := b.PubDate.Format("2006/01/02")
 	categories := strings.Join(b.Categories, ",")
-	genre := b.Genre
+	content := b.Content
 
-	message := fmt.Sprintf("<%s|%s>\n発売日: %s\nカテゴリー: %s\n内容: %s", url, title, pubDate, categories, genre)
+	message := fmt.Sprintf("<%s|%s>\n発売日: %s\nカテゴリー: %s\n内容: %s", url, title, pubDate, categories, content)
 	return message
 }

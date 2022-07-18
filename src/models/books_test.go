@@ -123,7 +123,7 @@ func TestUpdateBookInfo(t *testing.T) {
 
 	assert.Equal(t, "", sampleBook.Target)
 	assert.Equal(t, "", sampleBook.Format)
-	assert.Equal(t, "", sampleBook.Genre)
+	assert.Equal(t, "", sampleBook.Content)
 }
 
 func TestUpdateWithEmptyCcodeWhenSubjectIsEmpty(t *testing.T) {
@@ -155,7 +155,7 @@ func TestUpdateWithEmptyCcodeWhenSubjectIsEmpty(t *testing.T) {
 
 	assert.Equal(t, "", sampleBook.Target)
 	assert.Equal(t, "", sampleBook.Format)
-	assert.Equal(t, "", sampleBook.Genre)
+	assert.Equal(t, "", sampleBook.Content)
 }
 
 var sampleDecoder = subject.SubjectDecoder{
@@ -191,7 +191,7 @@ func TestUpdateSubject(t *testing.T) {
 
 	assert.EqualValues(t, "教養", sampleBook.Target)
 	assert.EqualValues(t, "単行本", sampleBook.Format)
-	assert.EqualValues(t, "物理学", sampleBook.Genre)
+	assert.EqualValues(t, "物理学", sampleBook.Content)
 
 }
 
@@ -213,7 +213,7 @@ func TestNotUpdateSubjectWhenCcodeIsInvalid(t *testing.T) {
 
 	assert.EqualValues(t, "", sampleBook.Target)
 	assert.EqualValues(t, "", sampleBook.Format)
-	assert.EqualValues(t, "", sampleBook.Genre)
+	assert.EqualValues(t, "", sampleBook.Content)
 
 }
 
@@ -229,7 +229,7 @@ func TestCreateNotificationMessageCorrectly(t *testing.T) {
 		Ccode:      "1042",
 		Target:     "教養",
 		Format:     "単行本",
-		Genre:      "物理学",
+		Content:    "物理学",
 	}
 
 	expectedMessage := `<http://example.com/bd/isbn/1111111111111|ご冗談でしょう、tatamiyaさん - tatamiya tamiya(著 / 文) | 畳屋書店>

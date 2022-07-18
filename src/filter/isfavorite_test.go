@@ -9,7 +9,7 @@ import (
 
 var sampleFavoriteFilter = FavoriteFilter{
 	FavoriteCategories: []string{"自然科学", "コンピュータ"},
-	FavoriteGenres:     []string{"物理学", "地理"},
+	FavoriteContents:   []string{"物理学", "地理"},
 }
 
 func TestReturnTrueForFavoriteCategory(t *testing.T) {
@@ -19,7 +19,7 @@ func TestReturnTrueForFavoriteCategory(t *testing.T) {
 		Ccode:      "1040",
 		Target:     "教養",
 		Format:     "単行本",
-		Genre:      "自然科学総記",
+		Content:    "自然科学総記",
 	}
 
 	isfav := sampleFavoriteFilter.IsFavorite(&sampleBook)
@@ -35,7 +35,7 @@ func TestReturnTrueForIfFavoriteCategoryHasSpace(t *testing.T) {
 		Ccode:      "1040",
 		Target:     "教養",
 		Format:     "単行本",
-		Genre:      "自然科学総記",
+		Content:    "自然科学総記",
 	}
 
 	isfav := sampleFavoriteFilter.IsFavorite(&sampleBook)
@@ -51,7 +51,7 @@ func TestReturnFalseForNotFavoriteCategory(t *testing.T) {
 		Ccode:      "1040",
 		Target:     "教養",
 		Format:     "単行本",
-		Genre:      "自然科学総記",
+		Content:    "自然科学総記",
 	}
 
 	isfav := sampleFavoriteFilter.IsFavorite(&sampleBook)
@@ -67,7 +67,7 @@ func TestReturnFalseForEmptyCategory(t *testing.T) {
 		Ccode:      "1040",
 		Target:     "教養",
 		Format:     "単行本",
-		Genre:      "自然科学総記",
+		Content:    "自然科学総記",
 	}
 
 	isfav := sampleFavoriteFilter.IsFavorite(&sampleBook)
@@ -76,14 +76,14 @@ func TestReturnFalseForEmptyCategory(t *testing.T) {
 
 }
 
-func TestReturnTrueForFavoriteGenre(t *testing.T) {
+func TestReturnTrueForFavoriteContent(t *testing.T) {
 
 	sampleBook := models.Book{
 		Categories: []string{},
 		Ccode:      "1042",
 		Target:     "教養",
 		Format:     "単行本",
-		Genre:      "物理学",
+		Content:    "物理学",
 	}
 
 	isfav := sampleFavoriteFilter.IsFavorite(&sampleBook)
@@ -92,14 +92,14 @@ func TestReturnTrueForFavoriteGenre(t *testing.T) {
 
 }
 
-func TestReturnFalseForNotFavoriteGenre(t *testing.T) {
+func TestReturnFalseForNotFavoriteContent(t *testing.T) {
 
 	sampleBook := models.Book{
 		Categories: []string{"工業・工学"},
 		Ccode:      "1058",
 		Target:     "教養",
 		Format:     "単行本",
-		Genre:      "その他の工業",
+		Content:    "その他の工業",
 	}
 
 	isfav := sampleFavoriteFilter.IsFavorite(&sampleBook)
@@ -108,14 +108,14 @@ func TestReturnFalseForNotFavoriteGenre(t *testing.T) {
 
 }
 
-func TestReturnFalseForEmptyGenre(t *testing.T) {
+func TestReturnFalseForEmptyContent(t *testing.T) {
 
 	sampleBook := models.Book{
 		Categories: []string{"工業・工学"},
 		Ccode:      "",
 		Target:     "",
 		Format:     "",
-		Genre:      "",
+		Content:    "",
 	}
 
 	isfav := sampleFavoriteFilter.IsFavorite(&sampleBook)
@@ -129,5 +129,5 @@ func TestNewFavoriteFilter(t *testing.T) {
 	favFilter, err := NewFavoriteFilter("./sample_favorites.json")
 	assert.Nil(t, err)
 	assert.EqualValues(t, []string{"コンピュータ"}, favFilter.FavoriteCategories)
-	assert.EqualValues(t, []string{"情報科学", "電子通信"}, favFilter.FavoriteGenres)
+	assert.EqualValues(t, []string{"情報科学", "電子通信"}, favFilter.FavoriteContents)
 }

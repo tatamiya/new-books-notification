@@ -14,10 +14,10 @@ type SubjectDecoder struct {
 }
 
 type DecodedSubject struct {
-	Ccode  string
-	Target string
-	Format string
-	Genre  string
+	Ccode   string
+	Target  string
+	Format  string
+	Content string
 }
 
 func (s *SubjectDecoder) Decode(ccode string) (*DecodedSubject, error) {
@@ -31,10 +31,10 @@ func (s *SubjectDecoder) Decode(ccode string) (*DecodedSubject, error) {
 	chars := []rune(ccode)
 	target := s.Taishou[string(chars[0])]
 	format := s.Keitai[string(chars[1])]
-	genre := s.Naiyou[string(chars[2:])]
+	content := s.Naiyou[string(chars[2:])]
 
 	return &DecodedSubject{
-		ccode, target, format, genre,
+		ccode, target, format, content,
 	}, nil
 }
 

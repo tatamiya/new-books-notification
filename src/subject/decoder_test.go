@@ -25,10 +25,10 @@ var testDecoder = SubjectDecoder{
 func TestDecodeSubjectCorrectly(t *testing.T) {
 
 	expectedDecoded := DecodedSubject{
-		Ccode:  "0040",
-		Target: "一般",
-		Format: "単行本",
-		Genre:  "自然科学総記",
+		Ccode:   "0040",
+		Target:  "一般",
+		Format:  "単行本",
+		Content: "自然科学総記",
 	}
 
 	actualDecoded, err := testDecoder.Decode("0040")
@@ -53,10 +53,10 @@ func TestDecodingFailsWhenCcodeContainsNonDigit(t *testing.T) {
 func TestDecodedResultIsEmptyWhenNotFound(t *testing.T) {
 
 	expectedDecoded := DecodedSubject{
-		Ccode:  "0049",
-		Target: "一般",
-		Format: "単行本",
-		Genre:  "",
+		Ccode:   "0049",
+		Target:  "一般",
+		Format:  "単行本",
+		Content: "",
 	}
 
 	actualDecoded, err := testDecoder.Decode("0049")
