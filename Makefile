@@ -1,8 +1,11 @@
 SHELL := /bin/bash
 
-.PHONY: test-local build
+.PHONY: test test-local build
 
-all: build local-run
+all: test build local-run
+
+test:
+	go test ./src/**/
 
 build:
 	docker build --tag new-books-notification .
