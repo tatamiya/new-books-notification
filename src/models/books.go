@@ -38,11 +38,15 @@ func NewBookListFromFeed(feed *gofeed.Feed) *BookList {
 
 	var books []*Book
 	for _, item := range feed.Items {
+		var trimmedCategories []string
+		for _, category := range item.Categories {
+			trimmedCategories = append(trimmedCategories, strings.TrimSpace(category))
+		}
 		book := Book{
 			Isbn:       extractISBN(item.Link),
-			Title:      item.Title,
+			Title:      strings.TrimSpace(item.Title),
 			Url:        item.Link,
-			Categories: item.Categories,
+			Categories: trimmedCategories,
 			PubDate:    *item.PublishedParsed,
 		}
 		books = append(books, &book)

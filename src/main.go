@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 	"sync"
 
 	"github.com/mmcdole/gofeed"
@@ -64,7 +63,7 @@ func main() {
 			if favFilter.IsFavorite(book) {
 				err = slackNotifier.Post(book.AsNotificationMessage())
 				if err != nil {
-					log.Printf("Error in notifying %s(%s) to Slack: %s\n", book.Isbn, strings.TrimSpace(book.Title), err)
+					log.Printf("Error in notifying %s(%s) to Slack: %s\n", book.Isbn, book.Title, err)
 				}
 			}
 

@@ -31,7 +31,7 @@ func TestReturnTrueForFavoriteCategory(t *testing.T) {
 func TestReturnTrueForIfFavoriteCategoryHasSpace(t *testing.T) {
 
 	sampleBook := models.Book{
-		Categories: []string{"自然科学 "},
+		Categories: []string{"自然科学"},
 		Ccode:      "1040",
 		Target:     "教養",
 		Format:     "単行本",
