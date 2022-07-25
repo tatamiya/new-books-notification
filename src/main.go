@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -42,7 +41,6 @@ func main() {
 
 	webhookURL := os.Getenv("SLACK_WEBHOOK_URL")
 	slackNotifier, notifierErr := notifier.NewSlackNotifier(webhookURL)
-	fmt.Println(notifierErr)
 	if notifierErr != nil {
 		log.Println("Error in loading SlackNotifier.")
 	}
