@@ -53,6 +53,13 @@ func main() {
 			defer wg.Done()
 
 			openBDResp, err := openbd.GetDetailedBookInfo(book.Isbn)
+			if err != nil {
+				log.Printf("Cannot fetch data from OpenBD (%s, %s): %s", book.Isbn, book.Title, err)
+				return
+			} else if openBDResp == nil {
+				log.Printf("Response from OpenBD is empty (%s, %s)", book.Isbn, book.Title)
+				return
+			}
 
 			book.UpdateInfoFrom(openBDResp)
 			book.UpdateSubject(subjectDecoder)
