@@ -1,6 +1,9 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -11,6 +14,7 @@ import (
 	"github.com/tatamiya/new-books-notification/src/notifier"
 	"github.com/tatamiya/new-books-notification/src/openbd"
 	"github.com/tatamiya/new-books-notification/src/subject"
+	"github.com/tatamiya/new-books-notification/src/uploader"
 )
 
 func main() {
@@ -77,4 +81,16 @@ func main() {
 	}
 	wg.Wait()
 
+	b, _ := json.Marshal(feed)
+	ctx := context.Background()
+
+	bucketName := os.Getenv("GCS_BUCKET_NAME")
+	objectUploader, err := uploader.NewObjectUploader(ctx, bucketName, "")
+	if err == nil {
+		feedJsonFilename := fmt.Sprintf("feed%s.json", feed.PublishedParsed.Format("20060102"))
+		err = objectUploader.UploadJson(b, feedJsonFilename)
+	}
+	if err != nil {
+		log.Printf("Feed upload failed: %s", err)
+	}
 }
