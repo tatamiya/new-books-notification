@@ -84,13 +84,16 @@ func main() {
 	uploadFeed, err := generateJsonUploadObject(feed)
 	ctx := context.Background()
 	bucketName := os.Getenv("GCS_BUCKET_NAME")
-	objectUploader, err := uploader.NewGCSUploader(ctx, bucketName, "")
-	if err == nil {
-		err = objectUploader.Upload(uploadFeed)
+	objectUploader, uploaderErr := uploader.NewGCSUploader(ctx, bucketName, "")
+	if uploaderErr != nil {
+		log.Printf("Cannot create feed uploader: %s", uploaderErr)
+		return
 	}
-	if err != nil {
+	uploadErr := objectUploader.Upload(uploadFeed)
+	if uploadErr != nil {
 		log.Printf("Feed upload failed: %s", err)
 	}
+	return
 }
 
 func generateJsonUploadObject(feed *gofeed.Feed) (*uploader.UploadObject, error) {
