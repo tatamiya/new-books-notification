@@ -81,16 +81,31 @@ func main() {
 	}
 	wg.Wait()
 
-	b, _ := json.Marshal(feed)
+	uploadFeed, err := generateJsonUploadObject(feed)
 	ctx := context.Background()
-
 	bucketName := os.Getenv("GCS_BUCKET_NAME")
 	objectUploader, err := uploader.NewObjectUploader(ctx, bucketName, "")
 	if err == nil {
-		feedJsonFilename := fmt.Sprintf("feed%s.json", feed.PublishedParsed.Format("20060102"))
-		err = objectUploader.UploadJson(b, feedJsonFilename)
+		err = objectUploader.Upload(uploadFeed)
 	}
 	if err != nil {
 		log.Printf("Feed upload failed: %s", err)
 	}
+}
+
+func generateJsonUploadObject(feed *gofeed.Feed) (*uploader.UploadObject, error) {
+	b, err := json.Marshal(feed)
+	if err != nil {
+
+		return nil, fmt.Errorf("Failed in converting feed into JSON: %s", err)
+	}
+	feedJsonFilename := fmt.Sprintf("feed%s.json", feed.PublishedParsed.Format("20060102"))
+
+	uploadObject := uploader.UploadObject{
+		ObjectName:  feedJsonFilename,
+		ContentType: "application/json",
+		Binary:      b,
+	}
+
+	return &uploadObject, nil
 }
