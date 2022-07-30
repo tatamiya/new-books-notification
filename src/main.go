@@ -84,7 +84,7 @@ func main() {
 	uploadFeed, err := generateJsonUploadObject(feed)
 	ctx := context.Background()
 	bucketName := os.Getenv("GCS_BUCKET_NAME")
-	objectUploader, err := uploader.NewObjectUploader(ctx, bucketName, "")
+	objectUploader, err := uploader.NewGCSUploader(ctx, bucketName, "")
 	if err == nil {
 		err = objectUploader.Upload(uploadFeed)
 	}
