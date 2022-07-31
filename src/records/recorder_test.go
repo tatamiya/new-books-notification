@@ -103,7 +103,7 @@ func TestSaveRecordsCorrectly(t *testing.T) {
 		&sampleBook1, &sampleBook2,
 	}}
 
-	err = recorder.Put(ctx, &inputBookList)
+	err = recorder.SaveRecords(ctx, &inputBookList)
 	assert.Nil(t, err)
 
 }

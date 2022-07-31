@@ -131,7 +131,7 @@ func NewBQRecorder(ctx context.Context, settings *BQSettings) (*BQRecorder, erro
 	return &recorder, nil
 }
 
-func (s *BQRecorder) Put(ctx context.Context, bookList *models.BookList) error {
+func (s *BQRecorder) SaveRecords(ctx context.Context, bookList *models.BookList) error {
 	records := convertIntoRecordsFrom(bookList)
 
 	inserter := s.table.Inserter()
