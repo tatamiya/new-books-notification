@@ -143,7 +143,7 @@ func (s *BQRecorder) Put(ctx context.Context, bookList *models.BookList) error {
 	return nil
 }
 
-func (s *BQRecorder) GetISBN(ctx context.Context, targetDate time.Time) ([]string, error) {
+func (s *BQRecorder) GetRecordedISBN(ctx context.Context, targetDate time.Time) ([]string, error) {
 
 	table := s.table
 	fullTableID := fmt.Sprintf("`%s.%s.%s`", table.ProjectID, table.DatasetID, table.TableID)

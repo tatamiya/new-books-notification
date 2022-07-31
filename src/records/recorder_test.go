@@ -122,7 +122,7 @@ func TestGetISBNCorrectly(t *testing.T) {
 	loc, _ := time.LoadLocation("Asia/Tokyo")
 	date := time.Date(2022, time.August, 1, 0, 0, 0, 0, loc)
 
-	actualUploadedISBN, err := recorder.GetISBN(ctx, date)
+	actualUploadedISBN, err := recorder.GetRecordedISBN(ctx, date)
 	assert.Nil(t, err)
 	assert.EqualValues(t, []string{"1111111111111", "9999999999999"}, actualUploadedISBN)
 
@@ -142,7 +142,7 @@ func TestGetEmptyWhenNoRecordIsUploaded(t *testing.T) {
 	loc, _ := time.LoadLocation("Asia/Tokyo")
 	date := time.Date(2122, time.August, 1, 0, 0, 0, 0, loc)
 
-	actualUploadedISBN, err := recorder.GetISBN(ctx, date)
+	actualUploadedISBN, err := recorder.GetRecordedISBN(ctx, date)
 	assert.Nil(t, err)
 	assert.EqualValues(t, []string{}, actualUploadedISBN)
 
