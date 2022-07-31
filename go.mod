@@ -3,6 +3,8 @@ module github.com/tatamiya/new-books-notification
 go 1.15
 
 require (
+	cloud.google.com/go v0.90.0
+	cloud.google.com/go/bigquery v1.8.0
 	cloud.google.com/go/storage v1.10.0
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/mmcdole/gofeed v1.1.3
