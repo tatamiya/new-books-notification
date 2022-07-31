@@ -11,6 +11,6 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/slack-go/slack v0.9.0
 	github.com/stretchr/testify v1.7.0
-	google.golang.org/api v0.54.0 // indirect
+	google.golang.org/api v0.54.0
 	google.golang.org/genproto v0.0.0-20220630174209-ad1d48641aa7 // indirect
 )

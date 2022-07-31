@@ -9,6 +9,7 @@ import (
 	"cloud.google.com/go/bigquery"
 	"cloud.google.com/go/civil"
 	"github.com/tatamiya/new-books-notification/src/models"
+	"google.golang.org/api/iterator"
 )
 
 type Record struct {
@@ -140,4 +141,35 @@ func (s *BQRecorder) Put(ctx context.Context, bookList *models.BookList) error {
 	}
 
 	return nil
+}
+
+func (s *BQRecorder) GetISBN(ctx context.Context, targetDate time.Time) ([]string, error) {
+
+	table := s.table
+	fullTableID := fmt.Sprintf("`%s.%s.%s`", table.ProjectID, table.DatasetID, table.TableID)
+	uploadedDate := fmt.Sprintf("\"%s\"", targetDate.Format("2006-01-02"))
+	q := s.client.Query(`SELECT DISTINCT ISBN FROM ` + fullTableID + ` WHERE UploadedDate=` + uploadedDate)
+
+	it, err := q.Read(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("Query execution failed: %s", err)
+	}
+	type QueryResult struct {
+		ISBN string
+	}
+	uploadedISBN := []string{}
+	for {
+		var r QueryResult
+		err := it.Next(&r)
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			log.Printf("Unexpected query results: %s", err)
+			continue
+		}
+		uploadedISBN = append(uploadedISBN, r.ISBN)
+	}
+
+	return uploadedISBN, nil
 }

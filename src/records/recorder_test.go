@@ -107,3 +107,43 @@ func TestSaveRecordsCorrectly(t *testing.T) {
 	assert.Nil(t, err)
 
 }
+
+func TestGetISBNCorrectly(t *testing.T) {
+	bqSettings := BQSettings{
+		ProjectID:   os.Getenv("GCP_PROJECT_ID"),
+		DatasetName: os.Getenv("GCP_BIGQUERY_DATASET"),
+		TableName:   os.Getenv("GCP_BIGQUERY_TABLE"),
+	}
+	ctx := context.Background()
+	recorder, err := NewBQRecorder(ctx, &bqSettings)
+
+	assert.Nil(t, err)
+
+	loc, _ := time.LoadLocation("Asia/Tokyo")
+	date := time.Date(2022, time.August, 1, 0, 0, 0, 0, loc)
+
+	actualUploadedISBN, err := recorder.GetISBN(ctx, date)
+	assert.Nil(t, err)
+	assert.EqualValues(t, []string{"1111111111111", "9999999999999"}, actualUploadedISBN)
+
+}
+
+func TestGetEmptyWhenNoRecordIsUploaded(t *testing.T) {
+	bqSettings := BQSettings{
+		ProjectID:   os.Getenv("GCP_PROJECT_ID"),
+		DatasetName: os.Getenv("GCP_BIGQUERY_DATASET"),
+		TableName:   os.Getenv("GCP_BIGQUERY_TABLE"),
+	}
+	ctx := context.Background()
+	recorder, err := NewBQRecorder(ctx, &bqSettings)
+
+	assert.Nil(t, err)
+
+	loc, _ := time.LoadLocation("Asia/Tokyo")
+	date := time.Date(2122, time.August, 1, 0, 0, 0, 0, loc)
+
+	actualUploadedISBN, err := recorder.GetISBN(ctx, date)
+	assert.Nil(t, err)
+	assert.EqualValues(t, []string{}, actualUploadedISBN)
+
+}
