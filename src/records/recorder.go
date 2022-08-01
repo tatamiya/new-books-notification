@@ -12,6 +12,24 @@ import (
 	"google.golang.org/api/iterator"
 )
 
+var bqSchema = bigquery.Schema{
+	{Name: "ISBN", Required: true, Type: bigquery.StringFieldType},
+	{Name: "PubDate", Required: true, Type: bigquery.DateFieldType},
+	{Name: "Title", Required: true, Type: bigquery.StringFieldType},
+	{Name: "Url", Required: true, Type: bigquery.StringFieldType},
+	{Name: "Authors", Required: false, Type: bigquery.StringFieldType},
+	{Name: "Publisher", Required: false, Type: bigquery.StringFieldType},
+	{Name: "Categories", Required: false, Type: bigquery.StringFieldType},
+	{Name: "Ccode", Required: false, Type: bigquery.StringFieldType},
+	{Name: "Target", Required: false, Type: bigquery.StringFieldType},
+	{Name: "Format", Required: false, Type: bigquery.StringFieldType},
+	{Name: "Content", Required: false, Type: bigquery.StringFieldType},
+	{Name: "CreatedAt", Required: false, Type: bigquery.TimestampFieldType},
+	{Name: "LastUpdatedAt", Required: false, Type: bigquery.TimestampFieldType},
+	{Name: "UploadedAt", Required: true, Type: bigquery.TimestampFieldType},
+	{Name: "UploadedDate", Required: true, Type: bigquery.DateFieldType},
+}
+
 type Record struct {
 	ISBN          string
 	Title         string
@@ -31,25 +49,8 @@ type Record struct {
 }
 
 func (s *BQRecorder) CreateTable(ctx context.Context) error {
-	schema := bigquery.Schema{
-		{Name: "ISBN", Required: true, Type: bigquery.StringFieldType},
-		{Name: "PubDate", Required: true, Type: bigquery.DateFieldType},
-		{Name: "Title", Required: true, Type: bigquery.StringFieldType},
-		{Name: "Url", Required: true, Type: bigquery.StringFieldType},
-		{Name: "Authors", Required: false, Type: bigquery.StringFieldType},
-		{Name: "Publisher", Required: false, Type: bigquery.StringFieldType},
-		{Name: "Categories", Required: false, Type: bigquery.StringFieldType},
-		{Name: "Ccode", Required: false, Type: bigquery.StringFieldType},
-		{Name: "Target", Required: false, Type: bigquery.StringFieldType},
-		{Name: "Format", Required: false, Type: bigquery.StringFieldType},
-		{Name: "Content", Required: false, Type: bigquery.StringFieldType},
-		{Name: "CreatedAt", Required: false, Type: bigquery.TimestampFieldType},
-		{Name: "LastUpdatedAt", Required: false, Type: bigquery.TimestampFieldType},
-		{Name: "UploadedAt", Required: true, Type: bigquery.TimestampFieldType},
-		{Name: "UploadedDate", Required: true, Type: bigquery.DateFieldType},
-	}
 	metadata := bigquery.TableMetadata{
-		Schema: schema,
+		Schema: bqSchema,
 		TimePartitioning: &bigquery.TimePartitioning{
 			Type:  bigquery.DayPartitioningType,
 			Field: "UploadedDate",
