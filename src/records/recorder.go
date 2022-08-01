@@ -48,18 +48,6 @@ type Record struct {
 	UploadedDate  civil.Date
 }
 
-func (s *BQRecorder) createTable(ctx context.Context) error {
-	metadata := bigquery.TableMetadata{
-		Schema: bqSchema,
-		TimePartitioning: &bigquery.TimePartitioning{
-			Type:  bigquery.DayPartitioningType,
-			Field: "UploadedDate",
-		},
-	}
-
-	return s.table.Create(ctx, &metadata)
-}
-
 func convertIntoRecordsFrom(bookList *models.BookList) []*Record {
 	uploadedAt := bookList.UploadDate
 
@@ -101,6 +89,18 @@ func convertIntoRecord(book *models.Book, uploadedAt time.Time) *Record {
 type BQRecorder struct {
 	client *bigquery.Client
 	table  *bigquery.Table
+}
+
+func (s *BQRecorder) createTable(ctx context.Context) error {
+	metadata := bigquery.TableMetadata{
+		Schema: bqSchema,
+		TimePartitioning: &bigquery.TimePartitioning{
+			Type:  bigquery.DayPartitioningType,
+			Field: "UploadedDate",
+		},
+	}
+
+	return s.table.Create(ctx, &metadata)
 }
 
 type BQSettings struct {
