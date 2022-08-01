@@ -48,7 +48,7 @@ type Record struct {
 	UploadedDate  civil.Date
 }
 
-func (s *BQRecorder) CreateTable(ctx context.Context) error {
+func (s *BQRecorder) createTable(ctx context.Context) error {
 	metadata := bigquery.TableMetadata{
 		Schema: bqSchema,
 		TimePartitioning: &bigquery.TimePartitioning{
@@ -123,7 +123,7 @@ func NewBQRecorder(ctx context.Context, settings *BQSettings) (*BQRecorder, erro
 	_, err = table.Metadata(ctx)
 	if err != nil {
 		log.Printf("Cannot find the table %s: %s", settings.TableName, err)
-		if err = recorder.CreateTable(ctx); err != nil {
+		if err = recorder.createTable(ctx); err != nil {
 			return nil, fmt.Errorf("Cannot create a table: %s", err)
 		}
 		log.Printf("Successfully created the table %s", settings.TableName)
