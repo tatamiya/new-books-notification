@@ -63,6 +63,44 @@ func TestGenerateNewBookListFromFeedCorrectly(t *testing.T) {
 
 }
 
+func TestFilterOutBookListByISBNCorrectly(t *testing.T) {
+	sampleBookList := BookList{
+		Books: []*Book{
+			{
+				Isbn:  "1111111111111",
+				Title: "Book1",
+				Url:   "http://example.com/bd/isbn/1111111111111",
+			},
+			{
+				Isbn:  "2222222222222",
+				Title: "Book2",
+				Url:   "http://example.com/bd/isbn/2222222222222",
+			},
+			{
+				Isbn:  "3333333333333",
+				Title: "Book3",
+				Url:   "http://example.com/bd/isbn/3333333333333",
+			},
+		},
+	}
+
+	inputISBNsToFilter := []string{"1111111111111", "3333333333333", "4444444444444"}
+	expectedFileteredBookList := BookList{
+		Books: []*Book{
+			{
+				Isbn:  "2222222222222",
+				Title: "Book2",
+				Url:   "http://example.com/bd/isbn/2222222222222",
+			},
+		},
+	}
+
+	actualFilteredBookList := sampleBookList.FilterOut(inputISBNsToFilter)
+
+	assert.EqualValues(t, expectedFileteredBookList, *actualFilteredBookList)
+
+}
+
 func TestExtractISBN(t *testing.T) {
 	inputURL := "http://example.com/bd/isbn/9999999999999"
 	expectedISBN := "9999999999999"

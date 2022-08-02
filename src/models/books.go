@@ -64,6 +64,25 @@ func extractISBN(link string) string {
 	return re.FindString(u.Path)
 }
 
+func (bl *BookList) FilterOut(isbns []string) *BookList {
+
+	m := make(map[string]bool)
+	for _, isbn := range isbns {
+		m[isbn] = true
+	}
+
+	filteredBooks := []*Book{}
+	for _, book := range bl.Books {
+		if _, ok := m[book.Isbn]; !ok {
+			filteredBooks = append(filteredBooks, book)
+		}
+	}
+	return &BookList{
+		UploadDate: bl.UploadDate,
+		Books:      filteredBooks,
+	}
+}
+
 func (b *Book) UpdateInfoFrom(openbd *openbd.OpenBDResponse) {
 	summary := openbd.Summary
 	b.Authors = summary.Author
