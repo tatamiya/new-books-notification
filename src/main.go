@@ -13,6 +13,7 @@ import (
 	"github.com/tatamiya/new-books-notification/src/models"
 	"github.com/tatamiya/new-books-notification/src/notifier"
 	"github.com/tatamiya/new-books-notification/src/openbd"
+	"github.com/tatamiya/new-books-notification/src/recorder"
 	"github.com/tatamiya/new-books-notification/src/subject"
 	"github.com/tatamiya/new-books-notification/src/uploader"
 )
@@ -36,6 +37,25 @@ func main() {
 	bookList := models.NewBookListFromFeed(feed)
 	log.Println(bookList.UploadDate.String())
 
+	bqSettings := recorder.BQSettings{
+		ProjectID:   os.Getenv("GCP_PROJECT_ID"),
+		DatasetName: os.Getenv("GCP_BIGQUERY_DATASET"),
+		TableName:   os.Getenv("GCP_BIGQUERY_TABLE"),
+	}
+	ctx := context.Background()
+	bqRecorder, err := recorder.NewBQRecorder(ctx, &bqSettings)
+	var newBookList *models.BookList
+	if err != nil {
+		log.Printf("Cannot connect to BigQuery: %s", err)
+		newBookList = bookList
+	} else {
+		uploadedISBN, err := bqRecorder.GetRecordedISBN(ctx, bookList.UploadDate)
+		if err != nil {
+			log.Printf("Cannot fetch ISBNs of uploaded books from BigQuery: %s", err)
+		}
+		newBookList = bookList.FilterOut(uploadedISBN)
+	}
+
 	favoritesPath := rootPath + "favorites.json"
 	favFilter, err := filter.NewFavoriteFilter(favoritesPath)
 	if err != nil {
@@ -50,7 +70,7 @@ func main() {
 	}
 
 	var wg sync.WaitGroup
-	for _, book := range bookList.Books {
+	for _, book := range newBookList.Books {
 		wg.Add(1)
 		go func(book *models.Book) {
 
@@ -81,8 +101,12 @@ func main() {
 	}
 	wg.Wait()
 
+	err = bqRecorder.SaveRecords(ctx, newBookList)
+	if err != nil {
+		log.Printf("Cannot save newly arrived book records: %s", err)
+	}
+
 	uploadFeed, err := generateJsonUploadObject(feed)
-	ctx := context.Background()
 	bucketName := os.Getenv("GCS_BUCKET_NAME")
 	objectUploader, uploaderErr := uploader.NewGCSUploader(ctx, bucketName, "")
 	if uploaderErr != nil {
