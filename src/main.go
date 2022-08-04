@@ -88,7 +88,6 @@ func main() {
 			book.UpdateInfoFrom(openBDResp)
 			book.UpdateSubject(subjectDecoder)
 
-			log.Println(book)
 			if favFilter.IsFavorite(book) {
 				err = slackNotifier.Post(book.AsNotificationMessage())
 				if err != nil {
