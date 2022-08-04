@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"cloud.google.com/go/bigquery"
@@ -61,19 +62,13 @@ func convertIntoRecordsFrom(bookList *models.BookList) []*Record {
 
 func convertIntoRecord(book *models.Book, uploadedAt time.Time) *Record {
 
-	var category string
-	if len(book.Categories) > 0 {
-		category = book.Categories[0]
-	} else {
-		category = ""
-	}
 	return &Record{
 		ISBN:          book.Isbn,
 		Title:         book.Title,
 		Url:           book.Url,
 		Authors:       book.Authors,
 		Publisher:     book.Publisher,
-		Categories:    category,
+		Categories:    strings.Join(book.Categories, ","),
 		Ccode:         book.Ccode,
 		Target:        book.Target,
 		Format:        book.Format,
