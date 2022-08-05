@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"sync"
 
@@ -37,13 +39,9 @@ func main() {
 	bookList := models.NewBookListFromFeed(feed)
 	log.Println(bookList.UploadDate.String())
 
-	bqSettings := recorder.BQSettings{
-		ProjectID:   os.Getenv("GCP_PROJECT_ID"),
-		DatasetName: os.Getenv("GCP_BIGQUERY_DATASET"),
-		TableName:   os.Getenv("GCP_BIGQUERY_TABLE"),
-	}
+	bqSettings := fetchBQSettings()
 	ctx := context.Background()
-	bqRecorder, err := recorder.NewBQRecorder(ctx, &bqSettings)
+	bqRecorder, err := recorder.NewBQRecorder(ctx, bqSettings)
 	var newBookList *models.BookList
 	if err != nil {
 		log.Printf("Cannot connect to BigQuery: %s", err)
@@ -134,4 +132,40 @@ func generateJsonUploadObject(feed *gofeed.Feed) (*uploader.UploadObject, error)
 	}
 
 	return &uploadObject, nil
+}
+
+func fetchBQSettings() *recorder.BQSettings {
+
+	projectID, err := getProjectID()
+	if err != nil || projectID == "" {
+		log.Printf("Cannot get projectID from metadata API: %s", err)
+		projectID = os.Getenv("GCP_PROJECT_ID")
+	}
+
+	return &recorder.BQSettings{
+		ProjectID:   projectID,
+		DatasetName: os.Getenv("GCP_BIGQUERY_DATASET"),
+		TableName:   os.Getenv("GCP_BIGQUERY_TABLE"),
+	}
+}
+
+func getProjectID() (string, error) {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", "http://metadata.google.internal/computeMetadata/v1/project/project-id", nil)
+	if err != nil {
+		return "", fmt.Errorf("Could not create request: %s", err)
+	}
+	req.Header.Add("Metadata-Flavor", "Google")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("Request Failed: %s", err)
+	}
+
+	bProjectID, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("Could not read metadata response: %s", err)
+	}
+
+	return string(bProjectID), err
 }
