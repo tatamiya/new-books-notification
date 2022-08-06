@@ -114,6 +114,9 @@ func main() {
 	if uploadErr != nil {
 		log.Printf("Feed upload failed: %s", err)
 	}
+
+	log.Printf("Reported %d new book(s)", len(newBookList.Books))
+
 	return
 }
 
