@@ -18,6 +18,7 @@
 
 # Environment variables
 .env
+.env_prod
 
 # VSCode Settings
 .vscode

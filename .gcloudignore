@@ -1,0 +1,14 @@
+.gcloudignore
+
+.git
+.gitignore
+
+*_test.go
+*_stub.go
+README.md
+Makefile
+sandbox/**
+
+#!include:.gitignore
+
+!go.sum
