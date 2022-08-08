@@ -11,6 +11,7 @@ import (
 	"sync"
 
 	"github.com/mmcdole/gofeed"
+	"github.com/tatamiya/new-books-notification/src/config"
 	"github.com/tatamiya/new-books-notification/src/models"
 	"github.com/tatamiya/new-books-notification/src/notifier"
 	"github.com/tatamiya/new-books-notification/src/openbd"
@@ -20,16 +21,10 @@ import (
 )
 
 func main() {
-	url := "https://www.hanmoto.com/ci/bd/search/hdt/%E6%96%B0%E3%81%97%E3%81%8F%E7%99%BB%E9%8C%B2%E3%81%95%E3%82%8C%E3%81%9F%E6%9C%AC/sdate/today/created/today/order/desc/vw/rss20"
 	fp := gofeed.NewParser()
-	feed, _ := fp.ParseURL(url)
+	feed, _ := fp.ParseURL(config.FeedURL)
 
-	// gopath := os.Getenv("GOPATH")
-	// rootPath := gopath + "/src/github.com/tatamiya/new-books-notification/"
-	rootPath := "./"
-
-	jsonFilePath := rootPath + "src/subject/ccode.json"
-	subjectDecoder, err := subject.NewSubjectDecoder(jsonFilePath)
+	subjectDecoder, err := subject.NewSubjectDecoder(config.CcodeJsonFilePath)
 	if err != nil {
 		log.Println("Error in loading SubjectDecoder.")
 		panic(err)
@@ -53,8 +48,7 @@ func main() {
 		newBookList = bookList.FilterOut(uploadedISBN)
 	}
 
-	favoritesPath := rootPath + "favorites.json"
-	favFilter, err := notifier.NewFavoriteFilter(favoritesPath)
+	favFilter, err := notifier.NewFavoriteFilter(config.FilterSettingFilePath)
 	if err != nil {
 		log.Println("Error in loading Favorite Filter.")
 		panic(err)
