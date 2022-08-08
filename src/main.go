@@ -11,7 +11,6 @@ import (
 	"sync"
 
 	"github.com/mmcdole/gofeed"
-	"github.com/tatamiya/new-books-notification/src/filter"
 	"github.com/tatamiya/new-books-notification/src/models"
 	"github.com/tatamiya/new-books-notification/src/notifier"
 	"github.com/tatamiya/new-books-notification/src/openbd"
@@ -55,7 +54,7 @@ func main() {
 	}
 
 	favoritesPath := rootPath + "favorites.json"
-	favFilter, err := filter.NewFavoriteFilter(favoritesPath)
+	favFilter, err := notifier.NewFavoriteFilter(favoritesPath)
 	if err != nil {
 		log.Println("Error in loading Favorite Filter.")
 		panic(err)
