@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/mmcdole/gofeed"
 	"github.com/tatamiya/new-books-notification/src/config"
@@ -20,44 +21,46 @@ import (
 	"github.com/tatamiya/new-books-notification/src/uploader"
 )
 
-func main() {
-	fp := gofeed.NewParser()
-	feed, _ := fp.ParseURL(config.FeedURL)
+type Uploader interface {
+	Upload(*uploader.UploadObject) error
+}
 
-	subjectDecoder, err := subject.NewSubjectDecoder(config.CcodeJsonFilePath)
-	if err != nil {
-		log.Println("Error in loading SubjectDecoder.")
-		panic(err)
-	}
+type Recorder interface {
+	GetRecordedISBN(context.Context, time.Time) ([]string, error)
+	SaveRecords(context.Context, *models.BookList) error
+}
 
-	bookList := models.NewBookListFromFeed(feed)
-	log.Println(bookList.UploadDate.String())
+type Notifier interface {
+	Post(string) error
+}
 
-	bqSettings := fetchBQSettings()
+type Filter interface {
+	IsFavorite(*models.Book) bool
+}
+
+type DetailFetcher interface {
+	GetDetailedBookInfo(string) (*openbd.OpenBDResponse, error)
+}
+
+func coreProcess(
+	bookList *models.BookList,
+	subjectDecoder *subject.SubjectDecoder,
+	recorder Recorder,
+	filter Filter,
+	notifier Notifier,
+) int {
+
 	ctx := context.Background()
-	bqRecorder, err := recorder.NewBQRecorder(ctx, bqSettings)
+
 	var newBookList *models.BookList
-	if err != nil {
-		log.Printf("Cannot connect to BigQuery: %s", err)
+	if recorder != nil {
 		newBookList = bookList
 	} else {
-		uploadedISBN, err := bqRecorder.GetRecordedISBN(ctx, bookList.UploadDate)
+		uploadedISBN, err := recorder.GetRecordedISBN(ctx, bookList.UploadDate)
 		if err != nil {
 			log.Printf("Cannot fetch ISBNs of uploaded books from BigQuery: %s", err)
 		}
 		newBookList = bookList.FilterOut(uploadedISBN)
-	}
-
-	favFilter, err := notifier.NewFavoriteFilter(config.FilterSettingFilePath)
-	if err != nil {
-		log.Println("Error in loading Favorite Filter.")
-		panic(err)
-	}
-
-	webhookURL := os.Getenv("SLACK_WEBHOOK_URL")
-	slackNotifier, notifierErr := notifier.NewSlackNotifier(webhookURL)
-	if notifierErr != nil {
-		log.Println("Error in loading SlackNotifier.")
 	}
 
 	var wg sync.WaitGroup
@@ -79,8 +82,8 @@ func main() {
 			book.UpdateInfoFrom(openBDResp)
 			book.UpdateSubject(subjectDecoder)
 
-			if favFilter.IsFavorite(book) {
-				err = slackNotifier.Post(book.AsNotificationMessage())
+			if filter.IsFavorite(book) {
+				err = notifier.Post(book.AsNotificationMessage())
 				if err != nil {
 					log.Printf("Error in notifying %s(%s) to Slack: %s\n", book.Isbn, book.Title, err)
 				}
@@ -91,10 +94,47 @@ func main() {
 	}
 	wg.Wait()
 
-	err = bqRecorder.SaveRecords(ctx, newBookList)
+	err := recorder.SaveRecords(ctx, newBookList)
 	if err != nil {
 		log.Printf("Cannot save newly arrived book records: %s", err)
 	}
+
+	return len(newBookList.Books)
+
+}
+
+func main() {
+	fp := gofeed.NewParser()
+	feed, _ := fp.ParseURL(config.FeedURL)
+
+	subjectDecoder, err := subject.NewSubjectDecoder(config.CcodeJsonFilePath)
+	if err != nil {
+		log.Println("Error in loading SubjectDecoder.")
+		panic(err)
+	}
+
+	bookList := models.NewBookListFromFeed(feed)
+	log.Println(bookList.UploadDate.String())
+
+	bqSettings := fetchBQSettings()
+	ctx := context.Background()
+	bqRecorder, err := recorder.NewBQRecorder(ctx, bqSettings)
+
+	favFilter, err := notifier.NewFavoriteFilter(config.FilterSettingFilePath)
+	if err != nil {
+		log.Println("Error in loading Favorite Filter.")
+		panic(err)
+	}
+
+	webhookURL := os.Getenv("SLACK_WEBHOOK_URL")
+	slackNotifier, notifierErr := notifier.NewSlackNotifier(webhookURL)
+	if notifierErr != nil {
+		log.Println("Error in loading SlackNotifier.")
+	}
+
+	numUploaded := coreProcess(bookList, subjectDecoder, bqRecorder, favFilter, slackNotifier)
+
+	log.Printf("Reported %d new book(s)", numUploaded)
 
 	uploadFeed, err := generateJsonUploadObject(feed)
 	bucketName := os.Getenv("GCS_BUCKET_NAME")
@@ -107,8 +147,6 @@ func main() {
 	if uploadErr != nil {
 		log.Printf("Feed upload failed: %s", err)
 	}
-
-	log.Printf("Reported %d new book(s)", len(newBookList.Books))
 
 	return
 }
