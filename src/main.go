@@ -44,6 +44,7 @@ type DetailFetcher interface {
 
 func coreProcess(
 	bookList *models.BookList,
+	fetcher DetailFetcher,
 	subjectDecoder *subject.SubjectDecoder,
 	recorder Recorder,
 	filter Filter,
@@ -70,7 +71,7 @@ func coreProcess(
 
 			defer wg.Done()
 
-			openBDResp, err := openbd.GetDetailedBookInfo(book.Isbn)
+			openBDResp, err := fetcher.GetDetailedBookInfo(book.Isbn)
 			if err != nil {
 				log.Printf("Cannot fetch data from OpenBD (%s, %s): %s", book.Isbn, book.Title, err)
 				return
@@ -132,7 +133,9 @@ func main() {
 		log.Println("Error in loading SlackNotifier.")
 	}
 
-	numUploaded := coreProcess(bookList, subjectDecoder, bqRecorder, favFilter, slackNotifier)
+	detailFetcher := openbd.NewOpenBDDetailFetcher()
+
+	numUploaded := coreProcess(bookList, detailFetcher, subjectDecoder, bqRecorder, favFilter, slackNotifier)
 
 	log.Printf("Reported %d new book(s)", numUploaded)
 
