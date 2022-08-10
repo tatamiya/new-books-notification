@@ -143,13 +143,13 @@ func main() {
 
 	log.Printf("Reported %d new book(s)", numUploaded)
 
-	uploadFeed, err := generateJsonUploadObject(feed)
 	bucketName := os.Getenv("GCS_BUCKET_NAME")
 	objectUploader, uploaderErr := uploader.NewGCSUploader(ctx, bucketName, "")
 	if uploaderErr != nil {
 		log.Printf("Cannot create feed uploader: %s", uploaderErr)
 		return
 	}
+	uploadFeed, err := generateJsonUploadObject(feed)
 	uploadErr := objectUploader.Upload(uploadFeed)
 	if uploadErr != nil {
 		log.Printf("Feed upload failed: %s", err)
