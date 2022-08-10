@@ -106,7 +106,11 @@ func coreProcess(
 
 func main() {
 	fp := gofeed.NewParser()
-	feed, _ := fp.ParseURL(config.FeedURL)
+	feed, err := fp.ParseURL(config.FeedURL)
+	if err != nil {
+		log.Println("Could not get feed!")
+		panic(err)
+	}
 
 	subjectDecoder, err := subject.NewSubjectDecoder(config.CcodeJsonFilePath)
 	if err != nil {
