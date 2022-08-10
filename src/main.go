@@ -39,7 +39,7 @@ type Filter interface {
 }
 
 type DetailFetcher interface {
-	GetDetailedBookInfo(string) (*openbd.OpenBDResponse, error)
+	FetchDetailInfo(string) (*openbd.OpenBDResponse, error)
 }
 
 func coreProcess(
@@ -71,7 +71,7 @@ func coreProcess(
 
 			defer wg.Done()
 
-			openBDResp, err := fetcher.GetDetailedBookInfo(book.Isbn)
+			openBDResp, err := fetcher.FetchDetailInfo(book.Isbn)
 			if err != nil {
 				log.Printf("Cannot fetch data from OpenBD (%s, %s): %s", book.Isbn, book.Title, err)
 				return
