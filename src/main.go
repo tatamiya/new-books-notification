@@ -112,14 +112,16 @@ func main() {
 		panic(err)
 	}
 
+	bookList := models.NewBookListFromFeed(feed)
+	log.Println(bookList.UploadDate.String())
+
+	detailFetcher := openbd.NewOpenBDDetailFetcher()
+
 	subjectDecoder, err := subject.NewSubjectDecoder(config.CcodeJsonFilePath)
 	if err != nil {
 		log.Println("Error in loading SubjectDecoder.")
 		panic(err)
 	}
-
-	bookList := models.NewBookListFromFeed(feed)
-	log.Println(bookList.UploadDate.String())
 
 	bqSettings := fetchBQSettings()
 	ctx := context.Background()
@@ -136,8 +138,6 @@ func main() {
 	if notifierErr != nil {
 		log.Println("Error in loading SlackNotifier.")
 	}
-
-	detailFetcher := openbd.NewOpenBDDetailFetcher()
 
 	numUploaded := coreProcess(bookList, detailFetcher, subjectDecoder, bqRecorder, favFilter, slackNotifier)
 
