@@ -17,20 +17,20 @@ steps:
     - '--region'
     - '$_REGION'
     - '--update-env-vars'
-    - 'SLACK_WEBHOOK_URL=$_SLACK_WEBHOOK_URL'
-    - '--update-env-vars'
     - 'GCP_BIGQUERY_DATASET=$_GCP_BIGQUERY_DATASET'
     - '--update-env-vars'
     - 'GCP_BIGQUERY_TABLE=$_GCP_BIGQUERY_TABLE'
     - '--update-env-vars'
     - 'GCS_BUCKET_NAME=$_GCS_BUCKET_NAME'
+    - '--update-secrets'
+    - 'SLACK_WEBHOOK_URL=$_SECRETS_NAME:latest'
 substitutions:
   _IMAGE_NAME: new-books-notification
   _JOB_NAME: new-books-notification
   _REGION: asia-northeast1
-  _SLACK_WEBHOOK_URL: ""
   _GCP_BIGQUERY_DATASET: new_books_notification
   _GCP_BIGQUERY_TABLE: new-books
   _GCS_BUCKET_NAME: new-books-notification
+  _SECRETS_NAME: new-books-slack-webhook-url
 options:
   substitution_option: 'ALLOW_LOOSE'
