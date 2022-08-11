@@ -54,7 +54,7 @@ func coreProcess(
 	ctx := context.Background()
 
 	var newBookList *models.BookList
-	if recorder != nil {
+	if recorder == nil {
 		newBookList = bookList
 	} else {
 		uploadedISBN, err := recorder.GetRecordedISBN(ctx, bookList.UploadDate)
