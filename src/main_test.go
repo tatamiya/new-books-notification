@@ -119,7 +119,7 @@ func generageMockOpenBDResponse(isbn string, content string) *openbd.OpenBDRespo
 	}
 }
 
-func TestCoreProcess(t *testing.T) {
+func TestCoreProcessSkipsAlreadyUploadedBook(t *testing.T) {
 
 	loc, _ := time.LoadLocation("Asia/Tokyo")
 	dateUploaded := time.Date(2024, time.August, 1, 22, 42, 0, 0, loc)
@@ -129,28 +129,28 @@ func TestCoreProcess(t *testing.T) {
 		Books: []*models.Book{
 			{
 				Isbn:       "1111111111111",
-				Title:      "Normal test book",
+				Title:      "Newly arrived book",
 				Url:        "http://example.com/bd/isbn/1111111111111",
 				PubDate:    datePublished,
-				Categories: []string{"自然科学"},
+				Categories: []string{""},
 			},
 			{
 				Isbn:       "2222222222222",
-				Title:      "Test book with unfavorite category and content",
+				Title:      "Newly arrived book",
 				Url:        "http://example.com/bd/isbn/2222222222222",
 				PubDate:    datePublished,
-				Categories: []string{"学参"},
+				Categories: []string{""},
 			},
 			{
 				Isbn:       "3333333333333",
-				Title:      "Test book already uploaded",
+				Title:      "Already uploaded book",
 				Url:        "http://example.com/bd/isbn/3333333333333",
 				PubDate:    datePublished,
-				Categories: []string{"自然科学"},
+				Categories: []string{""},
 			},
 			{
 				Isbn:       "4444444444444",
-				Title:      "Test book not registered in OpenBD",
+				Title:      "Newly arrived book",
 				Url:        "http://example.com/bd/isbn/4444444444444",
 				PubDate:    datePublished,
 				Categories: []string{""},
@@ -158,27 +158,20 @@ func TestCoreProcess(t *testing.T) {
 		},
 	}
 
-	testOpenBDResponses := []*openbd.OpenBDResponse{
-		generageMockOpenBDResponse("1111111111111", "物理学"),
-		generageMockOpenBDResponse("2222222222222", "その他の工業"),
-		generageMockOpenBDResponse("3333333333333", "物理学"),
-	}
-	testDetailFetcher := DetailFetcherStub{
-		details: testOpenBDResponses,
-		IsError: false,
-	}
 	testRecorder := RecorderStub{
 		RecordedISBN: []string{"3333333333333"},
 		IsError:      false,
+	}
+
+	testDetailFetcher := DetailFetcherStub{
+		details: []*openbd.OpenBDResponse{},
+		IsError: false,
 	}
 	testNotifier := NotifierStub{
 		IsError: false,
 	}
 
-	testFavoriteFilter := notifier.FavoriteFilter{
-		FavoriteCategories: []string{"自然科学"},
-		FavoriteContents:   []string{"物理学"},
-	}
+	testFavoriteFilter := notifier.FavoriteFilter{}
 
 	numUploaded := coreProcess(
 		&inputBookList,
@@ -190,7 +183,72 @@ func TestCoreProcess(t *testing.T) {
 	)
 
 	assert.Equal(t, 3, numUploaded)
-	assert.Equal(t, 1, len(testNotifier.Messages))
 	assert.ElementsMatch(t, []string{"1111111111111", "2222222222222", "3333333333333", "4444444444444"}, testRecorder.RecordedISBN)
+
+}
+
+func TestCoreProcessNotifyingFavoriteBooks(t *testing.T) {
+
+	loc, _ := time.LoadLocation("Asia/Tokyo")
+	dateUploaded := time.Date(2024, time.August, 1, 22, 42, 0, 0, loc)
+	datePublished := time.Date(2024, time.September, 1, 22, 42, 0, 0, loc)
+	inputBookList := models.BookList{
+		UploadDate: dateUploaded,
+		Books: []*models.Book{
+			{
+				Isbn:       "1111111111111",
+				Title:      "Book with favorite category",
+				Url:        "http://example.com/bd/isbn/1111111111111",
+				PubDate:    datePublished,
+				Categories: []string{"自然科学"},
+			},
+			{
+				Isbn:       "2222222222222", // Content: "物理学"
+				Title:      "Book with unfavorite category and favorite content",
+				Url:        "http://example.com/bd/isbn/2222222222222",
+				PubDate:    datePublished,
+				Categories: []string{"趣味・実用"},
+			},
+			{
+				Isbn:       "3333333333333", // Content: "その他の工業"
+				Title:      "Book with unfavorite category and content",
+				Url:        "http://example.com/bd/isbn/3333333333333",
+				PubDate:    datePublished,
+				Categories: []string{"趣味・実用"},
+			},
+		},
+	}
+
+	testOpenBDResponses := []*openbd.OpenBDResponse{
+		generageMockOpenBDResponse("1111111111111", "物理学"),
+		generageMockOpenBDResponse("2222222222222", "物理学"),
+		generageMockOpenBDResponse("3333333333333", "その他の工業"),
+	}
+	testDetailFetcher := DetailFetcherStub{
+		details: testOpenBDResponses,
+		IsError: false,
+	}
+	testRecorder := RecorderStub{
+		IsError: false,
+	}
+	testNotifier := NotifierStub{
+		IsError: false,
+	}
+
+	testFavoriteFilter := notifier.FavoriteFilter{
+		FavoriteCategories: []string{"自然科学"},
+		FavoriteContents:   []string{"物理学"},
+	}
+
+	_ = coreProcess(
+		&inputBookList,
+		&testDetailFetcher,
+		&testDecoder,
+		&testRecorder,
+		&testFavoriteFilter,
+		&testNotifier,
+	)
+
+	assert.Equal(t, 2, len(testNotifier.Messages))
 
 }
