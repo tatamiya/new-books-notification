@@ -252,3 +252,58 @@ func TestCoreProcessNotifyingFavoriteBooks(t *testing.T) {
 	assert.Equal(t, 2, len(testNotifier.Messages))
 
 }
+
+func TestCoreProcessSkipsNotifyingAlreadyUploadedFavoriteBooks(t *testing.T) {
+
+	loc, _ := time.LoadLocation("Asia/Tokyo")
+	dateUploaded := time.Date(2024, time.August, 1, 22, 42, 0, 0, loc)
+	datePublished := time.Date(2024, time.September, 1, 22, 42, 0, 0, loc)
+	inputBookList := models.BookList{
+		UploadDate: dateUploaded,
+		Books: []*models.Book{
+			{
+				Isbn:       "1111111111111",
+				Title:      "Newly arrived favorite book",
+				Url:        "http://example.com/bd/isbn/1111111111111",
+				PubDate:    datePublished,
+				Categories: []string{"自然科学"},
+			},
+			{
+				Isbn:       "2222222222222",
+				Title:      "Already uploaded favorite book",
+				Url:        "http://example.com/bd/isbn/2222222222222",
+				PubDate:    datePublished,
+				Categories: []string{"自然科学"},
+			},
+		},
+	}
+
+	testRecorder := RecorderStub{
+		RecordedISBN: []string{"2222222222222"},
+		IsError:      false,
+	}
+
+	testOpenBDResponses := []*openbd.OpenBDResponse{}
+	testDetailFetcher := DetailFetcherStub{
+		details: testOpenBDResponses,
+		IsError: false,
+	}
+	testNotifier := NotifierStub{
+		IsError: false,
+	}
+	testFavoriteFilter := notifier.FavoriteFilter{
+		FavoriteCategories: []string{"自然科学"},
+	}
+
+	_ = coreProcess(
+		&inputBookList,
+		&testDetailFetcher,
+		&testDecoder,
+		&testRecorder,
+		&testFavoriteFilter,
+		&testNotifier,
+	)
+
+	assert.Equal(t, 1, len(testNotifier.Messages))
+
+}
