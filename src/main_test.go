@@ -102,7 +102,7 @@ func generageMockOpenBDResponse(isbn string, content string) *openbd.OpenBDRespo
 	ccode := "0099"
 	for k, v := range testDecoder.Naiyou {
 		if v == content {
-			ccode = k
+			ccode = fmt.Sprint("00", k)
 		}
 	}
 
