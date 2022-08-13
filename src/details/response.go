@@ -1,4 +1,4 @@
-package openbd
+package details
 
 type OpenBDResponse struct {
 	Onix    Onix    `json:"onix"`

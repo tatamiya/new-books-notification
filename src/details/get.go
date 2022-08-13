@@ -1,4 +1,4 @@
-package openbd
+package details
 
 import (
 	"encoding/json"

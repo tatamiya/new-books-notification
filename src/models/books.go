@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/mmcdole/gofeed"
-	"github.com/tatamiya/new-books-notification/src/openbd"
+	"github.com/tatamiya/new-books-notification/src/details"
 	"github.com/tatamiya/new-books-notification/src/subject"
 )
 
@@ -83,17 +83,17 @@ func (bl *BookList) FilterOut(isbns []string) *BookList {
 	}
 }
 
-func (b *Book) UpdateInfoFrom(openbd *openbd.OpenBDResponse) {
-	summary := openbd.Summary
+func (b *Book) UpdateInfoFrom(details *details.OpenBDResponse) {
+	summary := details.Summary
 	b.Authors = summary.Author
 	b.Publisher = summary.Publisher
 
-	subjects := openbd.Onix.DescriptiveDetail.Subject
+	subjects := details.Onix.DescriptiveDetail.Subject
 	if len(subjects) > 0 {
 		b.Ccode = subjects[0].SubjectCode
 	}
 
-	hanmoto := openbd.Hanmoto
+	hanmoto := details.Hanmoto
 	loc, _ := time.LoadLocation("Asia/Tokyo")
 
 	dateCreated, err := time.ParseInLocation("2006-01-02 15:04:05", hanmoto.DateCreated, loc)

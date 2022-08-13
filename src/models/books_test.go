@@ -6,7 +6,7 @@ import (
 
 	"github.com/mmcdole/gofeed"
 	"github.com/stretchr/testify/assert"
-	"github.com/tatamiya/new-books-notification/src/openbd"
+	"github.com/tatamiya/new-books-notification/src/details"
 	"github.com/tatamiya/new-books-notification/src/subject"
 )
 
@@ -109,10 +109,10 @@ func TestExtractISBN(t *testing.T) {
 	assert.Equal(t, expectedISBN, actualISBN)
 }
 
-var inputOpenBDResp = openbd.OpenBDResponse{
-	Onix: openbd.Onix{
-		DescriptiveDetail: openbd.DescriptiveDetail{
-			Subject: []openbd.Subject{
+var inputOpenBDResp = details.OpenBDResponse{
+	Onix: details.Onix{
+		DescriptiveDetail: details.DescriptiveDetail{
+			Subject: []details.Subject{
 				{
 					MainSubject:             "",
 					SubjectSchemeIdentifier: "00",
@@ -121,12 +121,12 @@ var inputOpenBDResp = openbd.OpenBDResponse{
 			},
 		},
 	},
-	Hanmoto: openbd.Hanmoto{
+	Hanmoto: details.Hanmoto{
 		DateModified: "2022-08-01 18:18:39",
 		DateCreated:  "2022-06-30 18:22:39",
 		DateKoukai:   "20220701",
 	},
-	Summary: openbd.Summary{
+	Summary: details.Summary{
 		ISBN:      "1111111111111",
 		Title:     "ご冗談でしょう、tatamiyaさん",
 		Series:    "シリーズ畳の不思議",
@@ -175,9 +175,9 @@ func TestUpdateWithEmptyCcodeWhenSubjectIsEmpty(t *testing.T) {
 		Categories: []string{"自然科学"},
 	}
 
-	inputOpenBDResp.Onix = openbd.Onix{
-		DescriptiveDetail: openbd.DescriptiveDetail{
-			Subject: []openbd.Subject{},
+	inputOpenBDResp.Onix = details.Onix{
+		DescriptiveDetail: details.DescriptiveDetail{
+			Subject: []details.Subject{},
 		}}
 
 	sampleBook.UpdateInfoFrom(&inputOpenBDResp)

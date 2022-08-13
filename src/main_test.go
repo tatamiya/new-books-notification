@@ -8,9 +8,9 @@ import (
 
 	"github.com/mmcdole/gofeed"
 	"github.com/stretchr/testify/assert"
+	"github.com/tatamiya/new-books-notification/src/details"
 	"github.com/tatamiya/new-books-notification/src/models"
 	"github.com/tatamiya/new-books-notification/src/notifier"
-	"github.com/tatamiya/new-books-notification/src/openbd"
 	"github.com/tatamiya/new-books-notification/src/subject"
 )
 
@@ -66,11 +66,11 @@ func (n *NotifierStub) Post(message string) error {
 }
 
 type DetailFetcherStub struct {
-	details []*openbd.OpenBDResponse
+	details []*details.OpenBDResponse
 	IsError bool
 }
 
-func (d *DetailFetcherStub) FetchDetailInfo(isbn string) (*openbd.OpenBDResponse, error) {
+func (d *DetailFetcherStub) FetchDetailInfo(isbn string) (*details.OpenBDResponse, error) {
 	if d.IsError {
 		return nil, fmt.Errorf("Could not get detailed information!")
 	}
@@ -81,7 +81,7 @@ func (d *DetailFetcherStub) FetchDetailInfo(isbn string) (*openbd.OpenBDResponse
 		}
 	}
 
-	return &openbd.OpenBDResponse{}, nil
+	return &details.OpenBDResponse{}, nil
 }
 
 var testDecoder = subject.SubjectDecoder{
@@ -97,7 +97,7 @@ var testDecoder = subject.SubjectDecoder{
 	},
 }
 
-func generageMockOpenBDResponse(isbn string, content string) *openbd.OpenBDResponse {
+func generageMockOpenBDResponse(isbn string, content string) *details.OpenBDResponse {
 
 	ccode := "0099"
 	for k, v := range testDecoder.Naiyou {
@@ -106,14 +106,14 @@ func generageMockOpenBDResponse(isbn string, content string) *openbd.OpenBDRespo
 		}
 	}
 
-	return &openbd.OpenBDResponse{
-		Onix: openbd.Onix{
-			DescriptiveDetail: openbd.DescriptiveDetail{
-				Subject: []openbd.Subject{
+	return &details.OpenBDResponse{
+		Onix: details.Onix{
+			DescriptiveDetail: details.DescriptiveDetail{
+				Subject: []details.Subject{
 					{SubjectCode: ccode}},
 			},
 		},
-		Summary: openbd.Summary{
+		Summary: details.Summary{
 			ISBN: isbn,
 		},
 	}
@@ -164,7 +164,7 @@ func TestCoreProcessSkipsAlreadyUploadedBook(t *testing.T) {
 	}
 
 	testDetailFetcher := DetailFetcherStub{
-		details: []*openbd.OpenBDResponse{},
+		details: []*details.OpenBDResponse{},
 		IsError: false,
 	}
 	testNotifier := NotifierStub{
@@ -219,7 +219,7 @@ func TestCoreProcessNotifyingFavoriteBooks(t *testing.T) {
 		},
 	}
 
-	testOpenBDResponses := []*openbd.OpenBDResponse{
+	testOpenBDResponses := []*details.OpenBDResponse{
 		generageMockOpenBDResponse("1111111111111", "物理学"),
 		generageMockOpenBDResponse("2222222222222", "物理学"),
 		generageMockOpenBDResponse("3333333333333", "その他の工業"),
@@ -283,7 +283,7 @@ func TestCoreProcessSkipsNotifyingAlreadyUploadedFavoriteBooks(t *testing.T) {
 		IsError:      false,
 	}
 
-	testOpenBDResponses := []*openbd.OpenBDResponse{}
+	testOpenBDResponses := []*details.OpenBDResponse{}
 	testDetailFetcher := DetailFetcherStub{
 		details: testOpenBDResponses,
 		IsError: false,

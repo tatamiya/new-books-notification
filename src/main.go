@@ -13,9 +13,9 @@ import (
 
 	"github.com/mmcdole/gofeed"
 	"github.com/tatamiya/new-books-notification/src/config"
+	"github.com/tatamiya/new-books-notification/src/details"
 	"github.com/tatamiya/new-books-notification/src/models"
 	"github.com/tatamiya/new-books-notification/src/notifier"
-	"github.com/tatamiya/new-books-notification/src/openbd"
 	"github.com/tatamiya/new-books-notification/src/recorder"
 	"github.com/tatamiya/new-books-notification/src/subject"
 	"github.com/tatamiya/new-books-notification/src/uploader"
@@ -39,7 +39,7 @@ type Filter interface {
 }
 
 type DetailFetcher interface {
-	FetchDetailInfo(string) (*openbd.OpenBDResponse, error)
+	FetchDetailInfo(string) (*details.OpenBDResponse, error)
 }
 
 func coreProcess(
@@ -115,7 +115,7 @@ func main() {
 	bookList := models.NewBookListFromFeed(feed)
 	log.Println(bookList.UploadDate.String())
 
-	detailFetcher := openbd.NewOpenBDDetailFetcher()
+	detailFetcher := details.NewOpenBDDetailFetcher()
 
 	subjectDecoder, err := subject.NewSubjectDecoder(config.CcodeJsonFilePath)
 	if err != nil {
