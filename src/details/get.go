@@ -24,7 +24,7 @@ func (f *OpenBDDetailFetcher) FetchDetailInfo(isbn string) (*OpenBDResponse, err
 	var openBDResp []*OpenBDResponse
 	decodeErr := json.NewDecoder(resp.Body).Decode(&openBDResp)
 	if decodeErr != nil {
-		err := fmt.Errorf("Error in decoding OpenBD JSON response: %s", decodeErr)
+		err := fmt.Errorf("error in decoding OpenBD JSON response: %s", decodeErr)
 
 		return nil, err
 	}

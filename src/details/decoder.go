@@ -23,10 +23,10 @@ type DecodedSubject struct {
 func (s *SubjectDecoder) Decode(ccode string) (*DecodedSubject, error) {
 
 	if _, err := strconv.Atoi(ccode); err != nil {
-		return nil, fmt.Errorf("Invalid Ccode! %s cannot be converted to digits: %s", ccode, err)
+		return nil, fmt.Errorf("invalid Ccode! %s cannot be converted to digits: %s", ccode, err)
 	}
 	if len(ccode) != 4 {
-		return nil, fmt.Errorf("Invalid Ccode! %s is not 4 digits", ccode)
+		return nil, fmt.Errorf("invalid Ccode! %s is not 4 digits", ccode)
 	}
 	chars := []rune(ccode)
 	target := s.Taishou[string(chars[0])]
@@ -43,11 +43,11 @@ func NewSubjectDecoder(codeTablePath string) (*SubjectDecoder, error) {
 	var decoder SubjectDecoder
 	ccodeData, ioErr := ioutil.ReadFile(codeTablePath)
 	if ioErr != nil {
-		return nil, fmt.Errorf("Could not read ccode.json!: %s", ioErr)
+		return nil, fmt.Errorf("could not read ccode.json!: %s", ioErr)
 	}
 	jsonErr := json.Unmarshal(ccodeData, &decoder)
 	if jsonErr != nil {
-		return nil, fmt.Errorf("Could not unmarshal json data!: %s", jsonErr)
+		return nil, fmt.Errorf("could not unmarshal json data!: %s", jsonErr)
 	}
 
 	return &decoder, nil
