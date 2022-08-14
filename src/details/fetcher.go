@@ -55,9 +55,14 @@ func (f *OpenBDDetailsFetcher) FetchDetailInfo(isbn string) (*DetailedInformatio
 	if len(subjects) > 0 {
 		ccode = subjects[0].SubjectCode
 	}
+	var format, target, content string
 	decoded, err := f.decoder.Decode(ccode)
 	if err != nil {
 		log.Println("Failed in decoding Ccode: ", err)
+	} else {
+		format = decoded.Format
+		target = decoded.Target
+		content = decoded.Content
 	}
 
 	return &DetailedInformation{
@@ -66,9 +71,9 @@ func (f *OpenBDDetailsFetcher) FetchDetailInfo(isbn string) (*DetailedInformatio
 		CreatedDate:     createdDate,
 		LastUpdatedDate: lastUpdatedDate,
 		Ccode:           ccode,
-		Format:          decoded.Format,
-		Target:          decoded.Target,
-		Content:         decoded.Content,
+		Format:          format,
+		Target:          target,
+		Content:         content,
 	}, nil
 
 }
