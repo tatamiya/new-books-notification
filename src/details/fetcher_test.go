@@ -157,3 +157,33 @@ func TestFetcherFillsByEmptyWhenOpenBDResponseMissesSubjectField(t *testing.T) {
 	assert.Equal(t, "", actualDetailedInfo.Content)
 
 }
+
+func TestFetcherFillsByEmptyWhenOpenBDResponseIsEmpty(t *testing.T) {
+
+	testFetcher := OpenBDDetailsFetcher{
+		client: &openBDClientStub{
+			IsError: false,
+		},
+		decoder: &sampleDecoder,
+	}
+
+	actualDetailedInfo, err := testFetcher.FetchDetailInfo("1111111111111")
+
+	assert.Nil(t, err)
+	assert.Nil(t, actualDetailedInfo)
+}
+
+func TestFetcherReturnsErrorWhenOpenBDRequestFails(t *testing.T) {
+
+	testFetcher := OpenBDDetailsFetcher{
+		client: &openBDClientStub{
+			IsError: true,
+		},
+		decoder: &sampleDecoder,
+	}
+
+	actualDetailedInfo, err := testFetcher.FetchDetailInfo("1111111111111")
+
+	assert.NotNil(t, err)
+	assert.Nil(t, actualDetailedInfo)
+}
