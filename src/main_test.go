@@ -11,7 +11,6 @@ import (
 	"github.com/tatamiya/new-books-notification/src/details"
 	"github.com/tatamiya/new-books-notification/src/models"
 	"github.com/tatamiya/new-books-notification/src/notifier"
-	"github.com/tatamiya/new-books-notification/src/subject"
 )
 
 func TestGenerateUploadObjectOfFeed(t *testing.T) {
@@ -84,7 +83,7 @@ func (d *DetailFetcherStub) FetchDetailInfo(isbn string) (*details.OpenBDRespons
 	return &details.OpenBDResponse{}, nil
 }
 
-var testDecoder = subject.SubjectDecoder{
+var testDecoder = details.SubjectDecoder{
 	Taishou: map[string]string{
 		"0": "一般",
 	},

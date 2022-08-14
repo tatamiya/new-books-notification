@@ -1,4 +1,4 @@
-package subject
+package details
 
 import (
 	"testing"

@@ -10,7 +10,6 @@ import (
 
 	"github.com/mmcdole/gofeed"
 	"github.com/tatamiya/new-books-notification/src/details"
-	"github.com/tatamiya/new-books-notification/src/subject"
 )
 
 type BookList struct {
@@ -110,7 +109,7 @@ func (b *Book) UpdateInfoFrom(details *details.OpenBDResponse) {
 
 }
 
-func (b *Book) UpdateSubject(decoder *subject.SubjectDecoder) error {
+func (b *Book) UpdateSubject(decoder *details.SubjectDecoder) error {
 
 	decodedSubject, err := decoder.Decode(b.Ccode)
 	if err != nil {

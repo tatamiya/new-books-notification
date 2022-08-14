@@ -30,6 +30,6 @@ ENV GOTRACEBACK=single
 WORKDIR /crawler
 COPY --from=build /app ./app
 COPY favorites.json favorites.json
-COPY ./src/subject/ccode.json ./src/subject/ccode.json
+COPY ./src/details/ccode.json ./src/subject/ccode.json
 
 ENTRYPOINT ["./app"]

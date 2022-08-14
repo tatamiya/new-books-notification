@@ -17,7 +17,6 @@ import (
 	"github.com/tatamiya/new-books-notification/src/models"
 	"github.com/tatamiya/new-books-notification/src/notifier"
 	"github.com/tatamiya/new-books-notification/src/recorder"
-	"github.com/tatamiya/new-books-notification/src/subject"
 	"github.com/tatamiya/new-books-notification/src/uploader"
 )
 
@@ -45,7 +44,7 @@ type DetailFetcher interface {
 func coreProcess(
 	bookList *models.BookList,
 	fetcher DetailFetcher,
-	subjectDecoder *subject.SubjectDecoder,
+	subjectDecoder *details.SubjectDecoder,
 	recorder Recorder,
 	filter Filter,
 	notifier Notifier,
@@ -117,7 +116,7 @@ func main() {
 
 	detailFetcher := details.NewOpenBDDetailFetcher()
 
-	subjectDecoder, err := subject.NewSubjectDecoder(config.CcodeJsonFilePath)
+	subjectDecoder, err := details.NewSubjectDecoder(config.CcodeJsonFilePath)
 	if err != nil {
 		log.Println("Error in loading SubjectDecoder.")
 		panic(err)

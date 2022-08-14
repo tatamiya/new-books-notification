@@ -7,7 +7,6 @@ import (
 	"github.com/mmcdole/gofeed"
 	"github.com/stretchr/testify/assert"
 	"github.com/tatamiya/new-books-notification/src/details"
-	"github.com/tatamiya/new-books-notification/src/subject"
 )
 
 func TestGenerateNewBookListFromFeedCorrectly(t *testing.T) {
@@ -196,7 +195,7 @@ func TestUpdateWithEmptyCcodeWhenSubjectIsEmpty(t *testing.T) {
 	assert.Equal(t, "", sampleBook.Content)
 }
 
-var sampleDecoder = subject.SubjectDecoder{
+var sampleDecoder = details.SubjectDecoder{
 	Taishou: map[string]string{
 		"0": "一般",
 		"1": "教養",
