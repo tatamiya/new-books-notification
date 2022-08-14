@@ -131,3 +131,29 @@ func TestFetcherFillsByEmptyWhenInvalidCcodeIsInput(t *testing.T) {
 	assert.Equal(t, "", actualDetailedInfo.Content)
 
 }
+
+func TestFetcherFillsByEmptyWhenOpenBDResponseMissesSubjectField(t *testing.T) {
+	sampleOpenBDResp.Onix = Onix{
+		DescriptiveDetail: DescriptiveDetail{
+			Subject: []Subject{},
+		},
+	}
+
+	testFetcher := OpenBDDetailsFetcher{
+		client: &openBDClientStub{
+			Responses: map[string]*OpenBDResponse{
+				"1111111111111": &sampleOpenBDResp,
+			},
+			IsError: false,
+		},
+		decoder: &sampleDecoder,
+	}
+
+	actualDetailedInfo, err := testFetcher.FetchDetailInfo("1111111111111")
+
+	assert.Nil(t, err)
+	assert.Equal(t, "", actualDetailedInfo.Target)
+	assert.Equal(t, "", actualDetailedInfo.Format)
+	assert.Equal(t, "", actualDetailedInfo.Content)
+
+}
