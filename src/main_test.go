@@ -65,22 +65,18 @@ func (n *NotifierStub) Post(message string) error {
 }
 
 type DetailFetcherStub struct {
-	details []*details.OpenBDResponse
+	details map[string]*details.DetailedInformation
 	IsError bool
 }
 
-func (d *DetailFetcherStub) FetchDetailInfo(isbn string) (*details.OpenBDResponse, error) {
+func (d *DetailFetcherStub) FetchDetailInfo(isbn string) (*details.DetailedInformation, error) {
 	if d.IsError {
 		return nil, fmt.Errorf("Could not get detailed information!")
 	}
 
-	for _, detail := range d.details {
-		if detail.Summary.ISBN == isbn {
-			return detail, nil
-		}
-	}
+	detail := d.details[isbn]
 
-	return &details.OpenBDResponse{}, nil
+	return detail, nil
 }
 
 var testDecoder = details.SubjectDecoder{
@@ -96,7 +92,7 @@ var testDecoder = details.SubjectDecoder{
 	},
 }
 
-func generageMockOpenBDResponse(isbn string, content string) *details.OpenBDResponse {
+func generageMockDetailedInformation(content string) *details.DetailedInformation {
 
 	ccode := "0099"
 	for k, v := range testDecoder.Naiyou {
@@ -105,16 +101,8 @@ func generageMockOpenBDResponse(isbn string, content string) *details.OpenBDResp
 		}
 	}
 
-	return &details.OpenBDResponse{
-		Onix: details.Onix{
-			DescriptiveDetail: details.DescriptiveDetail{
-				Subject: []details.Subject{
-					{SubjectCode: ccode}},
-			},
-		},
-		Summary: details.Summary{
-			ISBN: isbn,
-		},
+	return &details.DetailedInformation{
+		Ccode: ccode,
 	}
 }
 
@@ -163,7 +151,7 @@ func TestCoreProcessSkipsAlreadyUploadedBook(t *testing.T) {
 	}
 
 	testDetailFetcher := DetailFetcherStub{
-		details: []*details.OpenBDResponse{},
+		details: map[string]*details.DetailedInformation{},
 		IsError: false,
 	}
 	testNotifier := NotifierStub{
@@ -175,7 +163,6 @@ func TestCoreProcessSkipsAlreadyUploadedBook(t *testing.T) {
 	numUploaded := coreProcess(
 		&inputBookList,
 		&testDetailFetcher,
-		&testDecoder,
 		&testRecorder,
 		&testFavoriteFilter,
 		&testNotifier,
@@ -218,13 +205,13 @@ func TestCoreProcessNotifyingFavoriteBooks(t *testing.T) {
 		},
 	}
 
-	testOpenBDResponses := []*details.OpenBDResponse{
-		generageMockOpenBDResponse("1111111111111", "物理学"),
-		generageMockOpenBDResponse("2222222222222", "物理学"),
-		generageMockOpenBDResponse("3333333333333", "その他の工業"),
+	testDetails := map[string]*details.DetailedInformation{
+		"1111111111111": generageMockDetailedInformation("物理学"),
+		"2222222222222": generageMockDetailedInformation("物理学"),
+		"3333333333333": generageMockDetailedInformation("その他の工業"),
 	}
 	testDetailFetcher := DetailFetcherStub{
-		details: testOpenBDResponses,
+		details: testDetails,
 		IsError: false,
 	}
 	testRecorder := RecorderStub{
@@ -242,7 +229,6 @@ func TestCoreProcessNotifyingFavoriteBooks(t *testing.T) {
 	_ = coreProcess(
 		&inputBookList,
 		&testDetailFetcher,
-		&testDecoder,
 		&testRecorder,
 		&testFavoriteFilter,
 		&testNotifier,
@@ -282,9 +268,8 @@ func TestCoreProcessSkipsNotifyingAlreadyUploadedFavoriteBooks(t *testing.T) {
 		IsError:      false,
 	}
 
-	testOpenBDResponses := []*details.OpenBDResponse{}
 	testDetailFetcher := DetailFetcherStub{
-		details: testOpenBDResponses,
+		details: map[string]*details.DetailedInformation{},
 		IsError: false,
 	}
 	testNotifier := NotifierStub{
@@ -297,7 +282,6 @@ func TestCoreProcessSkipsNotifyingAlreadyUploadedFavoriteBooks(t *testing.T) {
 	_ = coreProcess(
 		&inputBookList,
 		&testDetailFetcher,
-		&testDecoder,
 		&testRecorder,
 		&testFavoriteFilter,
 		&testNotifier,

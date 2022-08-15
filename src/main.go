@@ -38,13 +38,12 @@ type Filter interface {
 }
 
 type DetailFetcher interface {
-	FetchDetailInfo(string) (*details.OpenBDResponse, error)
+	FetchDetailInfo(string) (*details.DetailedInformation, error)
 }
 
 func coreProcess(
 	bookList *models.BookList,
 	fetcher DetailFetcher,
-	subjectDecoder *details.SubjectDecoder,
 	recorder Recorder,
 	filter Filter,
 	notifier Notifier,
@@ -70,17 +69,16 @@ func coreProcess(
 
 			defer wg.Done()
 
-			openBDResp, err := fetcher.FetchDetailInfo(book.Isbn)
+			detailedInfo, err := fetcher.FetchDetailInfo(book.Isbn)
 			if err != nil {
 				log.Printf("Cannot fetch data from OpenBD (%s, %s): %s", book.Isbn, book.Title, err)
 				return
-			} else if openBDResp == nil {
+			} else if detailedInfo == nil {
 				log.Printf("Response from OpenBD is empty (%s, %s)", book.Isbn, book.Title)
 				return
 			}
 
-			book.UpdateInfoFrom(openBDResp)
-			book.UpdateSubject(subjectDecoder)
+			book.UpdateDetails(detailedInfo)
 
 			if filter.IsFavorite(book) {
 				err = notifier.Post(book.AsNotificationMessage())
@@ -114,13 +112,12 @@ func main() {
 	bookList := models.NewBookListFromFeed(feed)
 	log.Println(bookList.UploadDate.String())
 
-	detailFetcher := details.NewOpenBDDetailFetcher()
-
 	subjectDecoder, err := details.NewSubjectDecoder(config.CcodeJsonFilePath)
 	if err != nil {
 		log.Println("Error in loading SubjectDecoder.")
 		panic(err)
 	}
+	detailFetcher := details.NewOpenBDDetailsFetcher(subjectDecoder)
 
 	bqSettings := fetchBQSettings()
 	ctx := context.Background()
@@ -138,7 +135,7 @@ func main() {
 		log.Println("Error in loading SlackNotifier.")
 	}
 
-	numUploaded := coreProcess(bookList, detailFetcher, subjectDecoder, bqRecorder, favFilter, slackNotifier)
+	numUploaded := coreProcess(bookList, detailFetcher, bqRecorder, favFilter, slackNotifier)
 
 	log.Printf("Reported %d new book(s)", numUploaded)
 
