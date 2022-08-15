@@ -72,9 +72,7 @@ func coreProcess(
 			detailedInfo, err := fetcher.FetchDetailInfo(book.Isbn)
 			if err != nil {
 				log.Printf("Cannot fetch data from OpenBD (%s, %s): %s", book.Isbn, book.Title, err)
-				return
-			}
-			if detailedInfo == nil {
+			} else if detailedInfo == nil {
 				log.Printf("Response from OpenBD is empty (%s, %s)", book.Isbn, book.Title)
 			} else {
 				book.UpdateDetails(detailedInfo)
