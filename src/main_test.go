@@ -79,33 +79,6 @@ func (d *DetailFetcherStub) FetchDetailInfo(isbn string) (*details.DetailedInfor
 	return detail, nil
 }
 
-var testDecoder = details.SubjectDecoder{
-	Taishou: map[string]string{
-		"0": "一般",
-	},
-	Keitai: map[string]string{
-		"0": "単行本",
-	},
-	Naiyou: map[string]string{
-		"42": "物理学",
-		"58": "その他の工業",
-	},
-}
-
-func generageMockDetailedInformation(content string) *details.DetailedInformation {
-
-	ccode := "0099"
-	for k, v := range testDecoder.Naiyou {
-		if v == content {
-			ccode = fmt.Sprint("00", k)
-		}
-	}
-
-	return &details.DetailedInformation{
-		Ccode: ccode,
-	}
-}
-
 func TestCoreProcessSkipsAlreadyUploadedBook(t *testing.T) {
 
 	loc, _ := time.LoadLocation("Asia/Tokyo")
@@ -206,9 +179,9 @@ func TestCoreProcessNotifyingFavoriteBooks(t *testing.T) {
 	}
 
 	testDetails := map[string]*details.DetailedInformation{
-		"1111111111111": generageMockDetailedInformation("物理学"),
-		"2222222222222": generageMockDetailedInformation("物理学"),
-		"3333333333333": generageMockDetailedInformation("その他の工業"),
+		"1111111111111": {Content: "物理学"},
+		"2222222222222": {Content: "物理学"},
+		"3333333333333": {Content: "その他の工業"},
 	}
 	testDetailFetcher := DetailFetcherStub{
 		details: testDetails,
