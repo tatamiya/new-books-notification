@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 	"regexp"
 	"strings"
@@ -82,45 +81,18 @@ func (bl *BookList) FilterOut(isbns []string) *BookList {
 	}
 }
 
-func (b *Book) UpdateInfoFrom(details *details.OpenBDResponse) {
-	summary := details.Summary
-	b.Authors = summary.Author
-	b.Publisher = summary.Publisher
+func (b *Book) UpdateDetails(detailedInfo *details.DetailedInformation) {
 
-	subjects := details.Onix.DescriptiveDetail.Subject
-	if len(subjects) > 0 {
-		b.Ccode = subjects[0].SubjectCode
-	}
+	b.Authors = detailedInfo.Author
+	b.Publisher = detailedInfo.Publisher
 
-	hanmoto := details.Hanmoto
-	loc, _ := time.LoadLocation("Asia/Tokyo")
+	b.Ccode = detailedInfo.Ccode
+	b.Target = detailedInfo.Target
+	b.Format = detailedInfo.Format
+	b.Content = detailedInfo.Content
 
-	dateCreated, err := time.ParseInLocation("2006-01-02 15:04:05", hanmoto.DateCreated, loc)
-	if err != nil {
-		log.Printf("Error in parsing timestamp: %s", hanmoto.DateCreated)
-	}
-	b.CreatedDate = dateCreated
-
-	dateModified, err := time.ParseInLocation("2006-01-02 15:04:05", hanmoto.DateModified, loc)
-	if err != nil {
-		log.Printf("Error in parsing timestamp: %s", hanmoto.DateModified)
-	}
-	b.LastUpdatedDate = dateModified
-
-}
-
-func (b *Book) UpdateSubject(decoder *details.SubjectDecoder) error {
-
-	decodedSubject, err := decoder.Decode(b.Ccode)
-	if err != nil {
-		return fmt.Errorf("Error in decoding Ccode: %s", err)
-	}
-	b.Target = decodedSubject.Target
-	b.Format = decodedSubject.Format
-	b.Content = decodedSubject.Content
-
-	return nil
-
+	b.CreatedDate = detailedInfo.CreatedDate
+	b.LastUpdatedDate = detailedInfo.LastUpdatedDate
 }
 
 func (b *Book) AsNotificationMessage() string {
