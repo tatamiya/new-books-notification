@@ -154,15 +154,13 @@ func main() {
 	if uploadErr != nil {
 		log.Printf("Feed upload failed: %s", err)
 	}
-
-	return
 }
 
 func generateJsonUploadObject(feed *gofeed.Feed) (*uploader.UploadObject, error) {
 	b, err := json.Marshal(feed)
 	if err != nil {
 
-		return nil, fmt.Errorf("Failed in converting feed into JSON: %s", err)
+		return nil, fmt.Errorf("failed in converting feed into JSON: %s", err)
 	}
 	feedJsonFilename := fmt.Sprintf("feed%s.json", feed.PublishedParsed.Format("20060102"))
 
@@ -194,18 +192,18 @@ func getProjectID() (string, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", "http://metadata.google.internal/computeMetadata/v1/project/project-id", nil)
 	if err != nil {
-		return "", fmt.Errorf("Could not create request: %s", err)
+		return "", fmt.Errorf("could not create request: %s", err)
 	}
 	req.Header.Add("Metadata-Flavor", "Google")
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", fmt.Errorf("Request Failed: %s", err)
+		return "", fmt.Errorf("request Failed: %s", err)
 	}
 
 	bProjectID, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("Could not read metadata response: %s", err)
+		return "", fmt.Errorf("could not read metadata response: %s", err)
 	}
 
 	return string(bProjectID), err
