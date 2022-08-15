@@ -122,6 +122,10 @@ func main() {
 	bqSettings := fetchBQSettings()
 	ctx := context.Background()
 	bqRecorder, err := recorder.NewBQRecorder(ctx, bqSettings)
+	if err != nil {
+		log.Println("Error in connecting to BigQuery.")
+		panic(err)
+	}
 
 	favFilter, err := notifier.NewFavoriteFilter(config.FilterSettingFilePath)
 	if err != nil {
