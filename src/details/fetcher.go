@@ -25,6 +25,13 @@ type OpenBDDetailsFetcher struct {
 	decoder *SubjectDecoder
 }
 
+func NewOpenBDDetailsFetcher(decoder *SubjectDecoder) *OpenBDDetailsFetcher {
+	return &OpenBDDetailsFetcher{
+		client:  &openBDClient{},
+		decoder: decoder,
+	}
+}
+
 func (f *OpenBDDetailsFetcher) FetchDetailInfo(isbn string) (*DetailedInformation, error) {
 
 	res, err := f.client.get(isbn)

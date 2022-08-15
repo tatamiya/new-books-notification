@@ -6,14 +6,10 @@ import (
 	"net/http"
 )
 
-type OpenBDDetailFetcher struct {
+type openBDClient struct {
 }
 
-func NewOpenBDDetailFetcher() *OpenBDDetailFetcher {
-	return &OpenBDDetailFetcher{}
-}
-
-func (f *OpenBDDetailFetcher) FetchDetailInfo(isbn string) (*OpenBDResponse, error) {
+func (c *openBDClient) get(isbn string) (*OpenBDResponse, error) {
 	openbdUrl := fmt.Sprintf("https://api.openbd.jp/v1/get?isbn=%s&pretty", isbn)
 	resp, respErr := http.Get(openbdUrl)
 	if respErr != nil {
