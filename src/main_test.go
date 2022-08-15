@@ -290,3 +290,47 @@ func TestCoreProcessSkipsNotifyingAlreadyUploadedFavoriteBooks(t *testing.T) {
 	assert.Equal(t, 1, len(testNotifier.Messages))
 
 }
+
+func TestCoreProcessMakesNotificationWhenFetchedDetailIsEmpty(t *testing.T) {
+	loc, _ := time.LoadLocation("Asia/Tokyo")
+	dateUploaded := time.Date(2024, time.August, 1, 22, 42, 0, 0, loc)
+	datePublished := time.Date(2024, time.September, 1, 22, 42, 0, 0, loc)
+	inputBookList := models.BookList{
+		UploadDate: dateUploaded,
+		Books: []*models.Book{
+			{
+				Isbn:       "1111111111111",
+				Title:      "Newly arrived book with favorite category but no details",
+				Url:        "http://example.com/bd/isbn/1111111111111",
+				PubDate:    datePublished,
+				Categories: []string{"自然科学"},
+			},
+		},
+	}
+
+	testRecorder := RecorderStub{
+		IsError: false,
+	}
+
+	testDetailFetcher := DetailFetcherStub{
+		details: map[string]*details.DetailedInformation{},
+		IsError: false,
+	}
+	testNotifier := NotifierStub{
+		IsError: false,
+	}
+	testFavoriteFilter := notifier.FavoriteFilter{
+		FavoriteCategories: []string{"自然科学"},
+	}
+
+	_ = coreProcess(
+		&inputBookList,
+		&testDetailFetcher,
+		&testRecorder,
+		&testFavoriteFilter,
+		&testNotifier,
+	)
+
+	assert.Equal(t, 1, len(testNotifier.Messages))
+
+}

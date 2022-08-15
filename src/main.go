@@ -73,12 +73,12 @@ func coreProcess(
 			if err != nil {
 				log.Printf("Cannot fetch data from OpenBD (%s, %s): %s", book.Isbn, book.Title, err)
 				return
-			} else if detailedInfo == nil {
-				log.Printf("Response from OpenBD is empty (%s, %s)", book.Isbn, book.Title)
-				return
 			}
-
-			book.UpdateDetails(detailedInfo)
+			if detailedInfo == nil {
+				log.Printf("Response from OpenBD is empty (%s, %s)", book.Isbn, book.Title)
+			} else {
+				book.UpdateDetails(detailedInfo)
+			}
 
 			if filter.IsFavorite(book) {
 				err = notifier.Post(book.AsNotificationMessage())
