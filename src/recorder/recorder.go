@@ -49,15 +49,20 @@ type Record struct {
 	UploadedDate  civil.Date
 }
 
-func convertIntoRecordsFrom(bookList *models.BookList) []*Record {
+func prepareUploadRecords(bookList *models.BookList) []*bigquery.StructSaver {
 	uploadedAt := bookList.UploadDate
 
-	var records []*Record
+	var savers []*bigquery.StructSaver
 	for _, book := range bookList.Books {
 		bookRecord := convertIntoRecord(book, uploadedAt)
-		records = append(records, bookRecord)
+		savers = append(savers,
+			&bigquery.StructSaver{
+				Schema: bqSchema,
+				Struct: bookRecord,
+			},
+		)
 	}
-	return records
+	return savers
 }
 
 func convertIntoRecord(book *models.Book, uploadedAt time.Time) *Record {
@@ -128,7 +133,7 @@ func NewBQRecorder(ctx context.Context, settings *BQSettings) (*BQRecorder, erro
 }
 
 func (s *BQRecorder) SaveRecords(ctx context.Context, bookList *models.BookList) error {
-	records := convertIntoRecordsFrom(bookList)
+	records := prepareUploadRecords(bookList)
 
 	inserter := s.table.Inserter()
 	err := inserter.Put(ctx, records)
