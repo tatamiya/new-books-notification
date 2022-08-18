@@ -2,10 +2,10 @@ SHELL := /bin/bash
 
 .PHONY: test test-local build
 
-all: test build local-run
+all: test deploy
 
 test:
-	go test ./src/**/
+	godotenv -f ./.env go test ./src/**/
 
 deploy:
 	. ./.env_prod && gcloud builds submit --config=cloudbuild.yaml \
