@@ -113,7 +113,7 @@ func NewBQRecorder(ctx context.Context, settings *BQSettings) (*BQRecorder, erro
 
 	client, err := bigquery.NewClient(ctx, settings.ProjectID)
 	if err != nil {
-		return nil, fmt.Errorf("Cannot connect to BigQuery: %s", err)
+		return nil, fmt.Errorf("cannot connect to BigQuery: %s", err)
 	}
 	dataset := client.Dataset(settings.DatasetName)
 	table := dataset.Table(settings.TableName)
@@ -124,7 +124,7 @@ func NewBQRecorder(ctx context.Context, settings *BQSettings) (*BQRecorder, erro
 	if err != nil {
 		log.Printf("Cannot find the table %s: %s", settings.TableName, err)
 		if err = recorder.createTable(ctx); err != nil {
-			return nil, fmt.Errorf("Cannot create a table: %s", err)
+			return nil, fmt.Errorf("cannot create a table: %s", err)
 		}
 		log.Printf("Successfully created the table %s", settings.TableName)
 	}
@@ -138,7 +138,7 @@ func (s *BQRecorder) SaveRecords(ctx context.Context, bookList *models.BookList)
 	inserter := s.table.Inserter()
 	err := inserter.Put(ctx, records)
 	if err != nil {
-		return fmt.Errorf("Upload book records failed: %s", err)
+		return fmt.Errorf("upload book records failed: %s", err)
 	}
 
 	return nil
@@ -153,7 +153,7 @@ func (s *BQRecorder) GetRecordedISBN(ctx context.Context, targetDate time.Time) 
 
 	it, err := q.Read(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("Query execution failed: %s", err)
+		return nil, fmt.Errorf("query execution failed: %s", err)
 	}
 	type QueryResult struct {
 		ISBN string
