@@ -55,6 +55,9 @@ func TestConvertBookIntoRecordCorrectly(t *testing.T) {
 }
 
 func TestSaveRecordsCorrectly(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping")
+	}
 	bqSettings := BQSettings{
 		ProjectID:   os.Getenv("GCP_PROJECT_ID"),
 		DatasetName: os.Getenv("GCP_BIGQUERY_DATASET"),
@@ -109,6 +112,9 @@ func TestSaveRecordsCorrectly(t *testing.T) {
 }
 
 func TestGetISBNCorrectly(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping")
+	}
 	bqSettings := BQSettings{
 		ProjectID:   os.Getenv("GCP_PROJECT_ID"),
 		DatasetName: os.Getenv("GCP_BIGQUERY_DATASET"),
@@ -129,6 +135,9 @@ func TestGetISBNCorrectly(t *testing.T) {
 }
 
 func TestGetEmptyWhenNoRecordIsUploaded(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping")
+	}
 	bqSettings := BQSettings{
 		ProjectID:   os.Getenv("GCP_PROJECT_ID"),
 		DatasetName: os.Getenv("GCP_BIGQUERY_DATASET"),

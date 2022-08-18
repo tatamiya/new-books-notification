@@ -5,7 +5,7 @@ SHELL := /bin/bash
 all: test deploy
 
 test:
-	godotenv -f ./.env go test ./src/**/
+	godotenv -f ./.env go test ./src/**/ -short
 
 deploy:
 	. ./.env_prod && gcloud builds submit --config=cloudbuild.yaml \
