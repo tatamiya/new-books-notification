@@ -130,7 +130,7 @@ func TestGetISBNCorrectly(t *testing.T) {
 
 	actualUploadedISBN, err := recorder.GetRecordedISBN(ctx, date)
 	assert.Nil(t, err)
-	assert.EqualValues(t, []string{"1111111111111", "9999999999999"}, actualUploadedISBN)
+	assert.ElementsMatch(t, []string{"1111111111111", "9999999999999"}, actualUploadedISBN)
 
 }
 
