@@ -20,10 +20,6 @@ import (
 	"github.com/tatamiya/new-books-notification/src/uploader"
 )
 
-type Uploader interface {
-	Upload(*uploader.UploadObject) error
-}
-
 type Recorder interface {
 	GetRecordedISBN(context.Context, time.Time) ([]string, error)
 	SaveRecords(context.Context, *models.BookList) error
