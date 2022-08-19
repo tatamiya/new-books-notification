@@ -158,7 +158,7 @@ func TestFetcherFillsByEmptyWhenOpenBDResponseMissesSubjectField(t *testing.T) {
 
 }
 
-func TestFetcherFillsByEmptyWhenOpenBDResponseIsEmpty(t *testing.T) {
+func TestFetcherReturnsNilWhenOpenBDResponseIsEmpty(t *testing.T) {
 
 	testFetcher := OpenBDDetailsFetcher{
 		client: &openBDClientStub{
