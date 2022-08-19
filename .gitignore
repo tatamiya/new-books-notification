@@ -22,3 +22,6 @@
 
 # VSCode Settings
 .vscode
+
+# .DS_Store
+.DS_Store
