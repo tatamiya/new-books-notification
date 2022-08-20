@@ -152,3 +152,83 @@ func TestBuildComplexFilter(t *testing.T) {
 	assert.EqualValues(t, expectedComplexFilter, *actualComplexFilter)
 
 }
+
+func TestComplexFilterForOrConditions(t *testing.T) {
+
+	sampleFilter := ComplexFilter{
+		conditionBlocks: []*conditionBlock{
+			{
+				conditions: []condition{
+					&categoryContainsCondition{words: []string{"自然科学"}},
+					&contentContainsCondition{words: []string{"数学", "物理学"}},
+				},
+			},
+		},
+	}
+
+	bookWithFavoriteCategoryAndContent := models.Book{
+		Categories: []string{"自然科学"},
+		Content:    "物理学",
+	}
+	assert.Equal(t, true, sampleFilter.IsFavorite(&bookWithFavoriteCategoryAndContent))
+
+	bookWithFavoriteCategoryAndUnfavoriteContent := models.Book{
+		Categories: []string{"自然科学"},
+		Content:    "その他の工業",
+	}
+	assert.Equal(t, true, sampleFilter.IsFavorite(&bookWithFavoriteCategoryAndUnfavoriteContent))
+
+	bookWithFavoriteContentAndUnfavoriteCategory := models.Book{
+		Categories: []string{"児童書"},
+		Content:    "物理学",
+	}
+	assert.Equal(t, true, sampleFilter.IsFavorite(&bookWithFavoriteContentAndUnfavoriteCategory))
+
+	bookWithUnfavoriteCategoryAndContent := models.Book{
+		Categories: []string{"児童書"},
+		Content:    "その他の工業",
+	}
+	assert.Equal(t, false, sampleFilter.IsFavorite(&bookWithUnfavoriteCategoryAndContent))
+}
+
+func TestComplexFilterForAndConditions(t *testing.T) {
+
+	sampleFilter := ComplexFilter{
+		conditionBlocks: []*conditionBlock{
+			{
+				conditions: []condition{
+					&categoryContainsCondition{words: []string{"自然科学"}},
+				},
+			},
+			{
+				conditions: []condition{
+					&contentContainsCondition{words: []string{"数学", "物理学"}},
+				},
+			},
+		},
+	}
+
+	bookWithFavoriteCategoryAndContent := models.Book{
+		Categories: []string{"自然科学"},
+		Content:    "物理学",
+	}
+	assert.Equal(t, true, sampleFilter.IsFavorite(&bookWithFavoriteCategoryAndContent))
+
+	bookWithFavoriteCategoryAndUnfavoriteContent := models.Book{
+		Categories: []string{"自然科学"},
+		Content:    "その他の工業",
+	}
+	assert.Equal(t, false, sampleFilter.IsFavorite(&bookWithFavoriteCategoryAndUnfavoriteContent))
+
+	bookWithFavoriteContentAndUnfavoriteCategory := models.Book{
+		Categories: []string{"児童書"},
+		Content:    "物理学",
+	}
+	assert.Equal(t, false, sampleFilter.IsFavorite(&bookWithFavoriteContentAndUnfavoriteCategory))
+
+	bookWithUnfavoriteCategoryAndContent := models.Book{
+		Categories: []string{"児童書"},
+		Content:    "その他の工業",
+	}
+	assert.Equal(t, false, sampleFilter.IsFavorite(&bookWithUnfavoriteCategoryAndContent))
+}
