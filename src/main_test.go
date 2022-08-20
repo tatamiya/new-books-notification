@@ -92,28 +92,28 @@ func TestCoreProcessSkipsAlreadyUploadedBook(t *testing.T) {
 				Title:      "Newly arrived book",
 				Url:        "http://example.com/bd/isbn/1111111111111",
 				PubDate:    datePublished,
-				Categories: []string{""},
+				Categories: "",
 			},
 			{
 				Isbn:       "2222222222222",
 				Title:      "Newly arrived book",
 				Url:        "http://example.com/bd/isbn/2222222222222",
 				PubDate:    datePublished,
-				Categories: []string{""},
+				Categories: "",
 			},
 			{
 				Isbn:       "3333333333333",
 				Title:      "Already uploaded book",
 				Url:        "http://example.com/bd/isbn/3333333333333",
 				PubDate:    datePublished,
-				Categories: []string{""},
+				Categories: "",
 			},
 			{
 				Isbn:       "4444444444444",
 				Title:      "Newly arrived book",
 				Url:        "http://example.com/bd/isbn/4444444444444",
 				PubDate:    datePublished,
-				Categories: []string{""},
+				Categories: "",
 			},
 		},
 	}
@@ -159,21 +159,21 @@ func TestCoreProcessNotifyingFavoriteBooks(t *testing.T) {
 				Title:      "Book with favorite category",
 				Url:        "http://example.com/bd/isbn/1111111111111",
 				PubDate:    datePublished,
-				Categories: []string{"自然科学"},
+				Categories: "自然科学",
 			},
 			{
 				Isbn:       "2222222222222", // Content: "物理学"
 				Title:      "Book with unfavorite category and favorite content",
 				Url:        "http://example.com/bd/isbn/2222222222222",
 				PubDate:    datePublished,
-				Categories: []string{"趣味・実用"},
+				Categories: "趣味・実用",
 			},
 			{
 				Isbn:       "3333333333333", // Content: "その他の工業"
 				Title:      "Book with unfavorite category and content",
 				Url:        "http://example.com/bd/isbn/3333333333333",
 				PubDate:    datePublished,
-				Categories: []string{"趣味・実用"},
+				Categories: "趣味・実用",
 			},
 		},
 	}
@@ -224,14 +224,14 @@ func TestCoreProcessSkipsNotifyingAlreadyUploadedFavoriteBooks(t *testing.T) {
 				Title:      "Newly arrived favorite book",
 				Url:        "http://example.com/bd/isbn/1111111111111",
 				PubDate:    datePublished,
-				Categories: []string{"自然科学"},
+				Categories: "自然科学",
 			},
 			{
 				Isbn:       "2222222222222",
 				Title:      "Already uploaded favorite book",
 				Url:        "http://example.com/bd/isbn/2222222222222",
 				PubDate:    datePublished,
-				Categories: []string{"自然科学"},
+				Categories: "自然科学",
 			},
 		},
 	}
@@ -276,7 +276,7 @@ func TestCoreProcessMakesNotificationWhenFetchedDetailIsEmpty(t *testing.T) {
 				Title:      "Newly arrived book with favorite category but no details",
 				Url:        "http://example.com/bd/isbn/1111111111111",
 				PubDate:    datePublished,
-				Categories: []string{"自然科学"},
+				Categories: "自然科学",
 			},
 		},
 	}
@@ -320,7 +320,7 @@ func TestCoreProcessMakesNotificationWhenFetchingDetailsFails(t *testing.T) {
 				Title:      "Newly arrived book with favorite category",
 				Url:        "http://example.com/bd/isbn/1111111111111",
 				PubDate:    datePublished,
-				Categories: []string{"自然科学"},
+				Categories: "自然科学",
 			},
 		},
 	}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"cloud.google.com/go/bigquery"
@@ -73,7 +72,7 @@ func convertIntoRecord(book *models.Book, uploadedAt time.Time) *Record {
 		Url:           book.Url,
 		Authors:       book.Authors,
 		Publisher:     book.Publisher,
-		Categories:    strings.Join(book.Categories, ","),
+		Categories:    book.Categories,
 		Ccode:         book.Ccode,
 		Target:        book.Target,
 		Format:        book.Format,

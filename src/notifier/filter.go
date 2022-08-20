@@ -29,11 +29,8 @@ func NewFavoriteFilter(filterPath string) (*FavoriteFilter, error) {
 }
 
 func (f *FavoriteFilter) IsFavorite(book *models.Book) bool {
-	var category string
-	if len(book.Categories) > 0 {
-		category = book.Categories[0]
-	}
 
+	category := book.Categories
 	for _, favCategory := range f.FavoriteCategories {
 		if category == favCategory {
 			return true
@@ -91,13 +88,9 @@ type categoryContainsCondition struct {
 }
 
 func (c *categoryContainsCondition) match(book *models.Book) bool {
-	var category string
-	if len(book.Categories) > 0 {
-		category = book.Categories[0]
-	}
 
 	for _, favCategory := range c.words {
-		if category == favCategory {
+		if book.Categories == favCategory {
 			return true
 		}
 	}

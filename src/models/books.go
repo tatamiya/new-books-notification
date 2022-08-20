@@ -22,7 +22,7 @@ type Book struct {
 	Url             string
 	Authors         string
 	Publisher       string
-	Categories      []string
+	Categories      string
 	Ccode           string
 	Target          string
 	Format          string
@@ -44,7 +44,7 @@ func NewBookListFromFeed(feed *gofeed.Feed) *BookList {
 			Isbn:       extractISBN(item.Link),
 			Title:      strings.TrimSpace(item.Title),
 			Url:        item.Link,
-			Categories: trimmedCategories,
+			Categories: strings.Join(trimmedCategories, ","),
 			PubDate:    *item.PublishedParsed,
 		}
 		books = append(books, &book)
@@ -99,7 +99,7 @@ func (b *Book) AsNotificationMessage() string {
 	url := b.Url
 	title := strings.TrimSpace(b.Title)
 	pubDate := b.PubDate.Format("2006/01/02")
-	categories := strings.Join(b.Categories, ",")
+	categories := b.Categories
 	content := b.Content
 
 	message := fmt.Sprintf("<%s|%s>\n発売日: %s\nカテゴリー: %s\n内容: %s", url, title, pubDate, categories, content)

@@ -44,14 +44,14 @@ func TestGenerateNewBookListFromFeedCorrectly(t *testing.T) {
 				Title:      "ご冗談でしょう、tatamiyaさん - tatamiya tamiya(著 / 文) | 畳屋書店",
 				Url:        "http://example.com/bd/isbn/1111111111111",
 				PubDate:    date1,
-				Categories: []string{"自然科学"},
+				Categories: "自然科学",
 			},
 			{
 				Isbn:       "9999999999999",
 				Title:      "流体力学（後編） - 今井功(著 / 文) | 裳華房",
 				Url:        "http://example.com/bd/isbn/9999999999999",
 				PubDate:    date2,
-				Categories: []string{""},
+				Categories: "",
 			},
 		},
 	}
@@ -117,7 +117,7 @@ func TestUpdateDetails(t *testing.T) {
 		Isbn:       "1111111111111",
 		Url:        "http://example.com/bd/isbn/1111111111111",
 		PubDate:    pubDate,
-		Categories: []string{"自然科学"},
+		Categories: "自然科学",
 	}
 
 	createdDate, _ := time.ParseInLocation("2006-01-02 15:04:05", "2022-06-30 18:22:39", loc)
@@ -139,7 +139,7 @@ func TestUpdateDetails(t *testing.T) {
 		Url:             "http://example.com/bd/isbn/1111111111111",
 		Authors:         "tatamiya tamiya／著 畳の科学／編集",
 		Publisher:       "畳屋書店",
-		Categories:      []string{"自然科学"},
+		Categories:      "自然科学",
 		Ccode:           "1040",
 		Target:          "教養",
 		Format:          "単行本",
@@ -163,7 +163,7 @@ func TestCreateNotificationMessageCorrectly(t *testing.T) {
 		Title:      "\nご冗談でしょう、tatamiyaさん - tatamiya tamiya(著 / 文) | 畳屋書店",
 		Url:        "http://example.com/bd/isbn/1111111111111",
 		PubDate:    date1,
-		Categories: []string{"自然科学"},
+		Categories: "自然科学",
 		Ccode:      "1042",
 		Target:     "教養",
 		Format:     "単行本",
