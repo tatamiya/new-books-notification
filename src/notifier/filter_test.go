@@ -115,3 +115,40 @@ func TestNewFavoriteFilter(t *testing.T) {
 	assert.EqualValues(t, []string{"コンピュータ"}, favFilter.FavoriteCategories)
 	assert.EqualValues(t, []string{"情報科学", "電子通信"}, favFilter.FavoriteContents)
 }
+
+func TestBuildComplexFilter(t *testing.T) {
+	inputFilterSettings := filterSettings{
+		Blocks: []filterBlocks{
+			{
+				Conditions: []filterCondition{
+					{
+						FilterBy:   "category",
+						FilterType: "contain",
+						Words:      []string{"自然科学"},
+					},
+					{
+						FilterBy:   "content",
+						FilterType: "contain",
+						Words:      []string{"数学", "物理学"},
+					},
+				},
+			},
+		},
+	}
+
+	expectedComplexFilter := ComplexFilter{
+		conditionBlocks: []*conditionBlock{
+			{
+				conditions: []condition{
+					&categoryContainsCondition{words: []string{"自然科学"}},
+					&contentContainsCondition{words: []string{"数学", "物理学"}},
+				},
+			},
+		},
+	}
+
+	actualComplexFilter := buildComplexFilter(&inputFilterSettings)
+
+	assert.EqualValues(t, expectedComplexFilter, *actualComplexFilter)
+
+}
