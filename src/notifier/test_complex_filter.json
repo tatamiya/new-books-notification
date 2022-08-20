@@ -1,0 +1,37 @@
+{
+    "_comment": "自然科学（特に数学・物理学）、ただし学参は除く",
+    "blocks": [
+        {
+            "_comment": "カテゴリが自然科学、もしくは内容が数学・物理学",
+            "conditions": [
+                {
+                    "filter_by": "category",
+                    "type": "contain",
+                    "words": [
+                        "自然科学"
+                    ]
+                },
+                {
+                    "filter_by": "content",
+                    "type": "contain",
+                    "words": [
+                        "数学",
+                        "物理学"
+                    ]
+                }
+            ]
+        },
+        {
+            "_comment": "学参は除外",
+            "conditions": [
+                {
+                    "filter_by": "content",
+                    "type": "not_contain",
+                    "words": [
+                        "学参"
+                    ]
+                }
+            ]
+        }
+    ]
+}

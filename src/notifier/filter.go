@@ -162,9 +162,10 @@ func buildComplexFilter(settings *filterSettings) *ComplexFilter {
 					words: filterCondition.Words,
 				})
 			}
-
 		}
-		blocks = append(blocks, &conditionBlock{conditions: conditions})
+		if len(conditions) > 0 {
+			blocks = append(blocks, &conditionBlock{conditions: conditions})
+		}
 	}
 
 	return &ComplexFilter{
