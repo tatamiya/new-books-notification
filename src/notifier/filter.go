@@ -92,6 +92,29 @@ func (c *notContainCondition) match(book *models.Book) bool {
 	return notContain
 }
 
+type notStartWithCondition struct {
+	filterBy string
+	words    []string
+}
+
+func (c *notStartWithCondition) match(book *models.Book) bool {
+	bookValue := reflect.ValueOf(*book)
+	targetFieldValue := bookValue.FieldByName(c.filterBy)
+
+	if !targetFieldValue.IsValid() {
+		return false
+	}
+
+	notStartWith := true
+	for _, unfavWord := range c.words {
+		if strings.HasPrefix(targetFieldValue.Interface().(string), unfavWord) {
+			notStartWith = false
+		}
+	}
+
+	return notStartWith
+}
+
 type filterSettings struct {
 	Blocks []filterBlocks `json:"blocks"`
 }
@@ -134,6 +157,12 @@ func buildNotificationFilter(settings *filterSettings) *NotificationFilter {
 			}
 			if isValidFieldName(filterBy) && filterCondition.FilterType == "not_contain" {
 				conditions = append(conditions, &notContainCondition{
+					filterBy: filterBy,
+					words:    filterCondition.Words,
+				})
+			}
+			if isValidFieldName(filterBy) && filterCondition.FilterType == "not_start_with" {
+				conditions = append(conditions, &notStartWithCondition{
 					filterBy: filterBy,
 					words:    filterCondition.Words,
 				})

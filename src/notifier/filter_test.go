@@ -143,6 +143,24 @@ func TestNotContainConditionFiltersCorrectly(t *testing.T) {
 	assert.Equal(t, false, testCondition.match(&bookWithUnfavoriteCategory))
 }
 
+func TestNotStartWithConditionFiltersCorrectly(t *testing.T) {
+	// Filter by Target
+	testCondition := notStartWithCondition{
+		filterBy: "Target",
+		words:    []string{"学参"},
+	}
+
+	bookWithFavoriteTarget := models.Book{
+		Target: "専門",
+	}
+	assert.Equal(t, true, testCondition.match(&bookWithFavoriteTarget))
+
+	bookWithUnfavoriteTarget := models.Book{
+		Target: "学参II（高校）",
+	}
+	assert.Equal(t, false, testCondition.match(&bookWithUnfavoriteTarget))
+}
+
 func TestNotificationFilterForOrConditions(t *testing.T) {
 
 	sampleFilter := NotificationFilter{
