@@ -53,20 +53,20 @@ type containCondition struct {
 }
 
 func (c *containCondition) match(book *models.Book) bool {
-	bookValue := reflect.ValueOf(*book)
-	targetFieldValue := bookValue.FieldByName(c.filterBy)
+	defaultResult := false
 
-	if !targetFieldValue.IsValid() {
-		return false
+	targetFieldValue, ok := getFieldValue(book, c.filterBy)
+	if !ok {
+		return defaultResult
 	}
 
 	for _, favWord := range c.words {
-		if targetFieldValue.Interface() == favWord {
+		if targetFieldValue == favWord {
 			return true
 		}
 	}
 
-	return false
+	return defaultResult
 }
 
 type notContainCondition struct {
@@ -75,21 +75,20 @@ type notContainCondition struct {
 }
 
 func (c *notContainCondition) match(book *models.Book) bool {
-	bookValue := reflect.ValueOf(*book)
-	targetFieldValue := bookValue.FieldByName(c.filterBy)
+	defaultResult := true
 
-	if !targetFieldValue.IsValid() {
-		return false
+	targetFieldValue, ok := getFieldValue(book, c.filterBy)
+	if !ok {
+		return defaultResult
 	}
 
-	notContain := true
 	for _, unfavWord := range c.words {
-		if targetFieldValue.Interface() == unfavWord {
-			notContain = false
+		if targetFieldValue == unfavWord {
+			return false
 		}
 	}
 
-	return notContain
+	return defaultResult
 }
 
 type notStartWithCondition struct {
@@ -98,21 +97,29 @@ type notStartWithCondition struct {
 }
 
 func (c *notStartWithCondition) match(book *models.Book) bool {
-	bookValue := reflect.ValueOf(*book)
-	targetFieldValue := bookValue.FieldByName(c.filterBy)
+	defaultResult := true
 
-	if !targetFieldValue.IsValid() {
-		return false
+	targetFieldValue, ok := getFieldValue(book, c.filterBy)
+	if !ok {
+		return defaultResult
 	}
 
-	notStartWith := true
 	for _, unfavWord := range c.words {
-		if strings.HasPrefix(targetFieldValue.Interface().(string), unfavWord) {
-			notStartWith = false
+		if strings.HasPrefix(targetFieldValue, unfavWord) {
+			return false
 		}
 	}
 
-	return notStartWith
+	return defaultResult
+}
+
+func getFieldValue(book *models.Book, fieldName string) (string, bool) {
+	bookValue := reflect.ValueOf(*book)
+	targetFieldValue := bookValue.FieldByName(fieldName)
+	if !targetFieldValue.IsValid() {
+		return "", false
+	}
+	return targetFieldValue.String(), true
 }
 
 type filterSettings struct {
