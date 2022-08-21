@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"reflect"
 	"strings"
 
@@ -156,23 +157,32 @@ func buildNotificationFilter(settings *filterSettings) *NotificationFilter {
 		var conditions []condition
 		for _, filterCondition := range filterBlock.Conditions {
 			filterBy := strings.Title(filterCondition.FilterBy)
-			if isValidFieldName(filterBy) && filterCondition.FilterType == "contain" {
-				conditions = append(conditions, &containCondition{
-					filterBy: filterBy,
-					words:    filterCondition.Words,
-				})
+			if !isValidFieldName(filterBy) {
+				continue
 			}
-			if isValidFieldName(filterBy) && filterCondition.FilterType == "not_contain" {
-				conditions = append(conditions, &notContainCondition{
+			var tempCondition condition
+			switch filterCondition.FilterType {
+			case "contain":
+				tempCondition = &containCondition{
 					filterBy: filterBy,
 					words:    filterCondition.Words,
-				})
+				}
+			case "not_contain":
+				tempCondition = &notContainCondition{
+					filterBy: filterBy,
+					words:    filterCondition.Words,
+				}
+			case "not_start_with":
+				tempCondition = &notStartWithCondition{
+					filterBy: filterBy,
+					words:    filterCondition.Words,
+				}
+			default:
+				log.Printf("Invalid filter type: %s", filterCondition.FilterType)
 			}
-			if isValidFieldName(filterBy) && filterCondition.FilterType == "not_start_with" {
-				conditions = append(conditions, &notStartWithCondition{
-					filterBy: filterBy,
-					words:    filterCondition.Words,
-				})
+
+			if tempCondition != nil {
+				conditions = append(conditions, tempCondition)
 			}
 		}
 		if len(conditions) > 0 {
