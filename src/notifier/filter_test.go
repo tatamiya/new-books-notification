@@ -141,3 +141,14 @@ func TestComplexFilterForAndConditions(t *testing.T) {
 	}
 	assert.Equal(t, false, sampleFilter.IsFavorite(&bookWithUnfavoriteCategoryAndContent))
 }
+
+func TestEmptyFilterDoesNotFail(t *testing.T) {
+
+	sampleFilter := ComplexFilter{}
+
+	bookWithFavoriteCategoryAndContent := models.Book{
+		Categories: "自然科学",
+		Content:    "物理学",
+	}
+	assert.Equal(t, false, sampleFilter.IsFavorite(&bookWithFavoriteCategoryAndContent))
+}

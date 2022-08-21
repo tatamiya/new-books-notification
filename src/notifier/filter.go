@@ -13,6 +13,9 @@ type ComplexFilter struct {
 }
 
 func (cf *ComplexFilter) IsFavorite(book *models.Book) bool {
+	if len(cf.conditionBlocks) == 0 {
+		return false
+	}
 	matchAll := true
 	for _, conditionBlock := range cf.conditionBlocks {
 		if !conditionBlock.matchAny(book) {
