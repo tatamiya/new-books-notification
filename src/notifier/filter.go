@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"reflect"
 
 	"github.com/tatamiya/new-books-notification/src/models"
 )
@@ -43,6 +44,28 @@ func (cb *conditionBlock) matchAny(book *models.Book) bool {
 		}
 	}
 	return match
+}
+
+type containCondition struct {
+	filterBy string
+	words    []string
+}
+
+func (c *containCondition) match(book *models.Book) bool {
+	bookValue := reflect.ValueOf(*book)
+	targetFieldValue := bookValue.FieldByName(c.filterBy)
+
+	if !targetFieldValue.IsValid() {
+		return false
+	}
+
+	for _, favWord := range c.words {
+		if targetFieldValue.Interface() == favWord {
+			return true
+		}
+	}
+
+	return false
 }
 
 type categoryContainsCondition struct {

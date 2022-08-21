@@ -62,6 +62,59 @@ func TestBuildNotificationFilter(t *testing.T) {
 
 }
 
+func TestContainConditionFiltersCorrectly(t *testing.T) {
+	// Filter by Categories
+	categoriesCondition := containCondition{
+		filterBy: "Categories",
+		words:    []string{"自然科学"},
+	}
+	bookWithFavoriteCategory := models.Book{
+		Categories: "自然科学",
+	}
+	assert.Equal(t, true, categoriesCondition.match(&bookWithFavoriteCategory))
+	bookWithUnfavoriteCategory := models.Book{
+		Categories: "児童書",
+	}
+	assert.Equal(t, false, categoriesCondition.match(&bookWithUnfavoriteCategory))
+
+	// Filter by Content
+	contentCondition := containCondition{
+		filterBy: "Content",
+		words:    []string{"数学", "物理学"},
+	}
+	bookWithFavoriteContent := models.Book{
+		Content: "物理学",
+	}
+	assert.Equal(t, true, contentCondition.match(&bookWithFavoriteContent))
+
+	// Filter by Target
+	targetCondition := containCondition{
+		filterBy: "Target",
+		words:    []string{"専門", "一般"},
+	}
+	bookWithFavoriteTarget := models.Book{
+		Target: "専門",
+	}
+	assert.Equal(t, true, targetCondition.match(&bookWithFavoriteTarget))
+}
+
+func TestContainConditionWithInvalidTargetFieldAlwaysReturnsFalse(t *testing.T) {
+	categoriesCondition := containCondition{
+		filterBy: "INVALID_FIELD_NAME",
+		words:    []string{"自然科学"},
+	}
+
+	bookWithFavoriteCategory := models.Book{
+		Categories: "自然科学",
+	}
+	assert.Equal(t, false, categoriesCondition.match(&bookWithFavoriteCategory))
+
+	bookWithUnfavoriteCategory := models.Book{
+		Categories: "児童書",
+	}
+	assert.Equal(t, false, categoriesCondition.match(&bookWithUnfavoriteCategory))
+}
+
 func TestNotificationFilterForOrConditions(t *testing.T) {
 
 	sampleFilter := NotificationFilter{
