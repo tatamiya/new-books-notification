@@ -83,8 +83,8 @@ func (c *notContainCondition) match(book *models.Book) bool {
 	}
 
 	notContain := true
-	for _, favWord := range c.words {
-		if targetFieldValue.Interface() == favWord {
+	for _, unfavWord := range c.words {
+		if targetFieldValue.Interface() == unfavWord {
 			notContain = false
 		}
 	}
