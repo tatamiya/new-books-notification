@@ -152,3 +152,29 @@ func TestEmptyFilterDoesNotFail(t *testing.T) {
 	}
 	assert.Equal(t, false, sampleFilter.IsFavorite(&bookWithFavoriteCategoryAndContent))
 }
+
+func TestFilterReturnsFalseForEmptyCategoryAndContent(t *testing.T) {
+	sampleFilter := ComplexFilter{
+		conditionBlocks: []*conditionBlock{
+			{
+				conditions: []condition{
+					&categoryContainsCondition{words: []string{"自然科学"}},
+					&contentContainsCondition{words: []string{"数学", "物理学"}},
+				},
+			},
+		},
+	}
+
+	bookWithEmptyCategoryAndContent := models.Book{}
+	assert.Equal(t, false, sampleFilter.IsFavorite(&bookWithEmptyCategoryAndContent))
+
+	bookWithEmptyContent := models.Book{
+		Categories: "hoge",
+	}
+	assert.Equal(t, false, sampleFilter.IsFavorite(&bookWithEmptyContent))
+
+	bookWithEmptyCategory := models.Book{
+		Content: "hoge",
+	}
+	assert.Equal(t, false, sampleFilter.IsFavorite(&bookWithEmptyCategory))
+}
