@@ -69,36 +69,6 @@ func (c *containCondition) match(book *models.Book) bool {
 	return false
 }
 
-type categoryContainsCondition struct {
-	words []string
-}
-
-func (c *categoryContainsCondition) match(book *models.Book) bool {
-
-	for _, favCategory := range c.words {
-		if book.Categories == favCategory {
-			return true
-		}
-	}
-
-	return false
-}
-
-type contentContainsCondition struct {
-	words []string
-}
-
-func (c *contentContainsCondition) match(book *models.Book) bool {
-	content := book.Content
-	for _, favContent := range c.words {
-		if content == favContent {
-			return true
-		}
-	}
-
-	return false
-}
-
 type filterSettings struct {
 	Blocks []filterBlocks `json:"blocks"`
 }
