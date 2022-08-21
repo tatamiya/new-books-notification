@@ -18,6 +18,11 @@ func TestLoadNewNotificationFilterSuccessfuly(t *testing.T) {
 					&containCondition{filterBy: "Content", words: []string{"数学", "物理学"}},
 				},
 			},
+			{
+				conditions: []condition{
+					&notContainCondition{filterBy: "Categories", words: []string{"学参"}},
+				},
+			},
 		},
 	}
 
@@ -118,6 +123,24 @@ func TestContainConditionWithInvalidTargetFieldAlwaysReturnsFalse(t *testing.T) 
 		Categories: "児童書",
 	}
 	assert.Equal(t, false, categoriesCondition.match(&bookWithUnfavoriteCategory))
+}
+
+func TestNotContainConditionFiltersCorrectly(t *testing.T) {
+	// Filter by Categories
+	testCondition := notContainCondition{
+		filterBy: "Categories",
+		words:    []string{"児童書", "学参"},
+	}
+
+	bookWithFavoriteCategory := models.Book{
+		Categories: "自然科学",
+	}
+	assert.Equal(t, true, testCondition.match(&bookWithFavoriteCategory))
+
+	bookWithUnfavoriteCategory := models.Book{
+		Categories: "児童書",
+	}
+	assert.Equal(t, false, testCondition.match(&bookWithUnfavoriteCategory))
 }
 
 func TestNotificationFilterForOrConditions(t *testing.T) {

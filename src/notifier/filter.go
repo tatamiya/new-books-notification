@@ -69,6 +69,29 @@ func (c *containCondition) match(book *models.Book) bool {
 	return false
 }
 
+type notContainCondition struct {
+	filterBy string
+	words    []string
+}
+
+func (c *notContainCondition) match(book *models.Book) bool {
+	bookValue := reflect.ValueOf(*book)
+	targetFieldValue := bookValue.FieldByName(c.filterBy)
+
+	if !targetFieldValue.IsValid() {
+		return false
+	}
+
+	notContain := true
+	for _, favWord := range c.words {
+		if targetFieldValue.Interface() == favWord {
+			notContain = false
+		}
+	}
+
+	return notContain
+}
+
 type filterSettings struct {
 	Blocks []filterBlocks `json:"blocks"`
 }
@@ -105,6 +128,12 @@ func buildNotificationFilter(settings *filterSettings) *NotificationFilter {
 			filterBy := strings.Title(filterCondition.FilterBy)
 			if isValidFieldName(filterBy) && filterCondition.FilterType == "contain" {
 				conditions = append(conditions, &containCondition{
+					filterBy: filterBy,
+					words:    filterCondition.Words,
+				})
+			}
+			if isValidFieldName(filterBy) && filterCondition.FilterType == "not_contain" {
+				conditions = append(conditions, &notContainCondition{
 					filterBy: filterBy,
 					words:    filterCondition.Words,
 				})
