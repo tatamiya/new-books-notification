@@ -14,8 +14,8 @@ func TestLoadNewNotificationFilterSuccessfuly(t *testing.T) {
 		conditionBlocks: []*conditionBlock{
 			{
 				conditions: []condition{
-					&categoryContainsCondition{words: []string{"自然科学"}},
-					&contentContainsCondition{words: []string{"数学", "物理学"}},
+					&containCondition{filterBy: "Categories", words: []string{"自然科学"}},
+					&containCondition{filterBy: "Content", words: []string{"数学", "物理学"}},
 				},
 			},
 		},
@@ -49,8 +49,8 @@ func TestBuildNotificationFilter(t *testing.T) {
 		conditionBlocks: []*conditionBlock{
 			{
 				conditions: []condition{
-					&categoryContainsCondition{words: []string{"自然科学"}},
-					&contentContainsCondition{words: []string{"数学", "物理学"}},
+					&containCondition{filterBy: "Categories", words: []string{"自然科学"}},
+					&containCondition{filterBy: "Content", words: []string{"数学", "物理学"}},
 				},
 			},
 		},

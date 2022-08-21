@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"reflect"
+	"strings"
 
 	"github.com/tatamiya/new-books-notification/src/models"
 )
@@ -131,13 +132,10 @@ func buildNotificationFilter(settings *filterSettings) *NotificationFilter {
 	for _, filterBlock := range settings.Blocks {
 		var conditions []condition
 		for _, filterCondition := range filterBlock.Conditions {
-			if filterCondition.FilterBy == "content" && filterCondition.FilterType == "contain" {
-				conditions = append(conditions, &contentContainsCondition{
-					words: filterCondition.Words,
-				})
-			} else if filterCondition.FilterBy == "categories" && filterCondition.FilterType == "contain" {
-				conditions = append(conditions, &categoryContainsCondition{
-					words: filterCondition.Words,
+			if filterCondition.FilterType == "contain" {
+				conditions = append(conditions, &containCondition{
+					filterBy: strings.Title(filterCondition.FilterBy),
+					words:    filterCondition.Words,
 				})
 			}
 		}
