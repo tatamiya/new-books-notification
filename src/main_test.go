@@ -10,7 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/tatamiya/new-books-notification/src/details"
 	"github.com/tatamiya/new-books-notification/src/models"
-	"github.com/tatamiya/new-books-notification/src/notifier"
 )
 
 func TestGenerateUploadObjectOfFeed(t *testing.T) {
@@ -48,6 +47,30 @@ func (r *RecorderStub) SaveRecords(ctx context.Context, bookList *models.BookLis
 		r.RecordedISBN = append(r.RecordedISBN, book.Isbn)
 	}
 	return nil
+}
+
+type FilterStub struct {
+	FavoriteCategories []string
+	FavoriteContents   []string
+}
+
+func (f *FilterStub) IsFavorite(book *models.Book) bool {
+
+	category := book.Categories
+	for _, favCategory := range f.FavoriteCategories {
+		if category == favCategory {
+			return true
+		}
+	}
+
+	content := book.Content
+	for _, favContent := range f.FavoriteContents {
+		if content == favContent {
+			return true
+		}
+	}
+
+	return false
 }
 
 type NotifierStub struct {
@@ -131,7 +154,7 @@ func TestCoreProcessSkipsAlreadyUploadedBook(t *testing.T) {
 		IsError: false,
 	}
 
-	testFavoriteFilter := notifier.FavoriteFilter{}
+	testFavoriteFilter := FilterStub{}
 
 	numUploaded := coreProcess(
 		&inputBookList,
@@ -194,7 +217,7 @@ func TestCoreProcessNotifyingFavoriteBooks(t *testing.T) {
 		IsError: false,
 	}
 
-	testFavoriteFilter := notifier.FavoriteFilter{
+	testFavoriteFilter := FilterStub{
 		FavoriteCategories: []string{"自然科学"},
 		FavoriteContents:   []string{"物理学"},
 	}
@@ -248,7 +271,7 @@ func TestCoreProcessSkipsNotifyingAlreadyUploadedFavoriteBooks(t *testing.T) {
 	testNotifier := NotifierStub{
 		IsError: false,
 	}
-	testFavoriteFilter := notifier.FavoriteFilter{
+	testFavoriteFilter := FilterStub{
 		FavoriteCategories: []string{"自然科学"},
 	}
 
@@ -292,7 +315,7 @@ func TestCoreProcessMakesNotificationWhenFetchedDetailIsEmpty(t *testing.T) {
 	testNotifier := NotifierStub{
 		IsError: false,
 	}
-	testFavoriteFilter := notifier.FavoriteFilter{
+	testFavoriteFilter := FilterStub{
 		FavoriteCategories: []string{"自然科学"},
 	}
 
@@ -335,7 +358,7 @@ func TestCoreProcessMakesNotificationWhenFetchingDetailsFails(t *testing.T) {
 	testNotifier := NotifierStub{
 		IsError: false,
 	}
-	testFavoriteFilter := notifier.FavoriteFilter{
+	testFavoriteFilter := FilterStub{
 		FavoriteCategories: []string{"自然科学"},
 	}
 
