@@ -121,9 +121,9 @@ func main() {
 		panic(err)
 	}
 
-	favFilter, err := notifier.NewFavoriteFilter(config.FilterSettingFilePath)
+	favFilter, err := notifier.NewComplexFilter(config.FilterSettingFilePath)
 	if err != nil {
-		log.Println("Error in loading Favorite Filter.")
+		log.Println("Error in loading notification filter.")
 		panic(err)
 	}
 
