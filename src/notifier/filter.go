@@ -102,9 +102,10 @@ func buildNotificationFilter(settings *filterSettings) *NotificationFilter {
 	for _, filterBlock := range settings.Blocks {
 		var conditions []condition
 		for _, filterCondition := range filterBlock.Conditions {
-			if filterCondition.FilterType == "contain" {
+			filterBy := strings.Title(filterCondition.FilterBy)
+			if isValidFieldName(filterBy) && filterCondition.FilterType == "contain" {
 				conditions = append(conditions, &containCondition{
-					filterBy: strings.Title(filterCondition.FilterBy),
+					filterBy: filterBy,
 					words:    filterCondition.Words,
 				})
 			}
@@ -117,4 +118,9 @@ func buildNotificationFilter(settings *filterSettings) *NotificationFilter {
 	return &NotificationFilter{
 		conditionBlocks: blocks,
 	}
+}
+
+func isValidFieldName(fieldName string) bool {
+	bookValue := reflect.ValueOf(models.Book{})
+	return bookValue.FieldByName(fieldName).IsValid()
 }

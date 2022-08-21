@@ -40,6 +40,11 @@ func TestBuildNotificationFilter(t *testing.T) {
 						FilterType: "contain",
 						Words:      []string{"数学", "物理学"},
 					},
+					{
+						FilterBy:   "INVALID",
+						FilterType: "contain",
+						Words:      []string{"hogehoge"},
+					},
 				},
 			},
 		},
