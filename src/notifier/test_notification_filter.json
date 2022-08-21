@@ -5,7 +5,7 @@
             "_comment": "カテゴリが自然科学、もしくは内容が数学・物理学",
             "conditions": [
                 {
-                    "filter_by": "category",
+                    "filter_by": "categories",
                     "type": "contain",
                     "words": [
                         "自然科学"

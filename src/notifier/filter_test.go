@@ -31,7 +31,7 @@ func TestBuildNotificationFilter(t *testing.T) {
 			{
 				Conditions: []filterCondition{
 					{
-						FilterBy:   "category",
+						FilterBy:   "categories",
 						FilterType: "contain",
 						Words:      []string{"自然科学"},
 					},

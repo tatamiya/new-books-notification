@@ -112,7 +112,7 @@ func buildNotificationFilter(settings *filterSettings) *NotificationFilter {
 				conditions = append(conditions, &contentContainsCondition{
 					words: filterCondition.Words,
 				})
-			} else if filterCondition.FilterBy == "category" && filterCondition.FilterType == "contain" {
+			} else if filterCondition.FilterBy == "categories" && filterCondition.FilterType == "contain" {
 				conditions = append(conditions, &categoryContainsCondition{
 					words: filterCondition.Words,
 				})
