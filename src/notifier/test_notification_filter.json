@@ -25,7 +25,7 @@
             "_comment": "学参は除外",
             "conditions": [
                 {
-                    "filter_by": "content",
+                    "filter_by": "categories",
                     "type": "not_contain",
                     "words": [
                         "学参"
