@@ -52,6 +52,15 @@ func TestBuildNotificationFilter(t *testing.T) {
 					},
 				},
 			},
+			{
+				Conditions: []filterCondition{
+					{
+						FilterBy:   "categories",
+						FilterType: "INVALID",
+						Words:      []string{"hogehoge"},
+					},
+				},
+			},
 		},
 	}
 
