@@ -7,10 +7,10 @@ import (
 	"github.com/tatamiya/new-books-notification/src/models"
 )
 
-func TestLoadNewComplexFilterSuccessfuly(t *testing.T) {
+func TestLoadNewNotificationFilterSuccessfuly(t *testing.T) {
 
-	actualComplexFilter, err := NewComplexFilter("./test_complex_filter.json")
-	expectedComplexFilter := ComplexFilter{
+	actualNotificationFilter, err := NewNotificationFilter("./test_notification_filter.json")
+	expectedNotificationFilter := NotificationFilter{
 		conditionBlocks: []*conditionBlock{
 			{
 				conditions: []condition{
@@ -21,11 +21,11 @@ func TestLoadNewComplexFilterSuccessfuly(t *testing.T) {
 		},
 	}
 
-	assert.EqualValues(t, expectedComplexFilter, *actualComplexFilter)
+	assert.EqualValues(t, expectedNotificationFilter, *actualNotificationFilter)
 	assert.Nil(t, err)
 }
 
-func TestBuildComplexFilter(t *testing.T) {
+func TestBuildNotificationFilter(t *testing.T) {
 	inputFilterSettings := filterSettings{
 		Blocks: []filterBlocks{
 			{
@@ -45,7 +45,7 @@ func TestBuildComplexFilter(t *testing.T) {
 		},
 	}
 
-	expectedComplexFilter := ComplexFilter{
+	expectedNotificationFilter := NotificationFilter{
 		conditionBlocks: []*conditionBlock{
 			{
 				conditions: []condition{
@@ -56,15 +56,15 @@ func TestBuildComplexFilter(t *testing.T) {
 		},
 	}
 
-	actualComplexFilter := buildComplexFilter(&inputFilterSettings)
+	actualNotificationFilter := buildNotificationFilter(&inputFilterSettings)
 
-	assert.EqualValues(t, expectedComplexFilter, *actualComplexFilter)
+	assert.EqualValues(t, expectedNotificationFilter, *actualNotificationFilter)
 
 }
 
-func TestComplexFilterForOrConditions(t *testing.T) {
+func TestNotificationFilterForOrConditions(t *testing.T) {
 
-	sampleFilter := ComplexFilter{
+	sampleFilter := NotificationFilter{
 		conditionBlocks: []*conditionBlock{
 			{
 				conditions: []condition{
@@ -100,9 +100,9 @@ func TestComplexFilterForOrConditions(t *testing.T) {
 	assert.Equal(t, false, sampleFilter.IsFavorite(&bookWithUnfavoriteCategoryAndContent))
 }
 
-func TestComplexFilterForAndConditions(t *testing.T) {
+func TestNotificationFilterForAndConditions(t *testing.T) {
 
-	sampleFilter := ComplexFilter{
+	sampleFilter := NotificationFilter{
 		conditionBlocks: []*conditionBlock{
 			{
 				conditions: []condition{
@@ -144,7 +144,7 @@ func TestComplexFilterForAndConditions(t *testing.T) {
 
 func TestEmptyFilterDoesNotFail(t *testing.T) {
 
-	sampleFilter := ComplexFilter{}
+	sampleFilter := NotificationFilter{}
 
 	bookWithFavoriteCategoryAndContent := models.Book{
 		Categories: "自然科学",
@@ -154,7 +154,7 @@ func TestEmptyFilterDoesNotFail(t *testing.T) {
 }
 
 func TestFilterReturnsFalseForEmptyCategoryAndContent(t *testing.T) {
-	sampleFilter := ComplexFilter{
+	sampleFilter := NotificationFilter{
 		conditionBlocks: []*conditionBlock{
 			{
 				conditions: []condition{

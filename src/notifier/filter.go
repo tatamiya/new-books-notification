@@ -8,11 +8,11 @@ import (
 	"github.com/tatamiya/new-books-notification/src/models"
 )
 
-type ComplexFilter struct {
+type NotificationFilter struct {
 	conditionBlocks []*conditionBlock
 }
 
-func (cf *ComplexFilter) IsFavorite(book *models.Book) bool {
+func (cf *NotificationFilter) IsFavorite(book *models.Book) bool {
 	if len(cf.conditionBlocks) == 0 {
 		return false
 	}
@@ -88,7 +88,7 @@ type filterCondition struct {
 	Words      []string `json:"words"`
 }
 
-func NewComplexFilter(filterPath string) (*ComplexFilter, error) {
+func NewNotificationFilter(filterPath string) (*NotificationFilter, error) {
 
 	var settings filterSettings
 	filterData, ioErr := ioutil.ReadFile(filterPath)
@@ -100,10 +100,10 @@ func NewComplexFilter(filterPath string) (*ComplexFilter, error) {
 		return nil, fmt.Errorf("could not unmarshal json data!: %s", jsonErr)
 	}
 
-	return buildComplexFilter(&settings), nil
+	return buildNotificationFilter(&settings), nil
 }
 
-func buildComplexFilter(settings *filterSettings) *ComplexFilter {
+func buildNotificationFilter(settings *filterSettings) *NotificationFilter {
 	var blocks []*conditionBlock
 	for _, filterBlock := range settings.Blocks {
 		var conditions []condition
@@ -123,7 +123,7 @@ func buildComplexFilter(settings *filterSettings) *ComplexFilter {
 		}
 	}
 
-	return &ComplexFilter{
+	return &NotificationFilter{
 		conditionBlocks: blocks,
 	}
 }
